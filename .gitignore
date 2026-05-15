@@ -1,0 +1,38 @@
+# Secrets
+.env
+*.env.local
+
+# EFM32 Simplicity Studio build artifacts
+firmware/efm32/GNU\ ARM*/
+firmware/efm32/*.axf
+firmware/efm32/*.bin
+firmware/efm32/*.hex
+firmware/efm32/*.map
+
+# .NET
+executive/bin/
+executive/obj/
+executive/**/*.user
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# Saleae exports (generated at runtime)
+/tmp/saleae_export/
+
+# NixOS build artifacts
+result
+result-*
+
+# IDE
+.vscode/
+.idea/
+*.swp
