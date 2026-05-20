@@ -47,11 +47,23 @@ The system is running firmware flashed on real hardware (dev kit hardware), with
 **Grafana** - local dev dashboard (running, NodePort 30300)
 
 **Blazor WASM Dashboard** - cloud production demo (Phase 2)
+
 - Azure Static Web Apps + Azure SignalR
 - Device fleet, job queue, real-time telemetry, fault injection panel
 - Exportable reports with requirement traceability
 
 ---
+
+### Firmware
+
+**Radar Simulator** - 
+
+- Commands:
+  - `ID?` → device identity
+  - `ST?` → current state/telemetry
+  - `SC:x` → set scenario (0-3)
+  - `RST` → reset to default state
+
 
 ## Phased Roadmap
 
@@ -59,7 +71,7 @@ The system is running firmware flashed on real hardware (dev kit hardware), with
 
 | Component | Status |
 |-----------|--------|
-| EFM32 bare metal firmware | ✅ Complete |
+| EFM32 bare metal firmware (radar simulator) | ✅ Complete |
 | K3s cluster (VM + P52) | ✅ Complete |
 | NATS pod | ✅ Running |
 | InfluxDB pod | ✅ Running |

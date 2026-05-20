@@ -10,9 +10,9 @@ firmware/efm32/*.hex
 firmware/efm32/*.map
 
 # .NET
-executive/bin/
-executive/obj/
-executive/**/*.user
+executives/bin/
+executives/obj/
+executives/**/*.user
 
 # Python
 __pycache__/
