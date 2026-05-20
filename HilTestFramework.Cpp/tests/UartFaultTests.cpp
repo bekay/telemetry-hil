@@ -70,10 +70,9 @@ TEST_F(UartFaultFixture, SaleaeCapture_AfterFaultInjection_CaptureStillValid)
     // Inject fault then verify Saleae can still capture
     faultInjector.InjectAsync(FaultType::FramingError).get();
 
-    PulseResult degraded {
-        .pulse_count        = 1,
-        .avg_pulse_width_us = 10.0
-    };
+    PulseResult degraded;
+    degraded.pulse_count = 1;
+    degraded.avg_pulse_width_us = 10.0;
     saleae.SetNextCaptureResult(degraded);
 
     auto result = saleae.CaptureAsync({}).get();
