@@ -85,7 +85,7 @@ The system is running firmware flashed on real hardware (dev kit hardware), with
 | C# test framework (xUnit/NUnit) | ⬜ Pending |
 | C# test executive (systemd) | ⬜ Pending |
 | C++ test executive | In Progress |
-| README live | ⬜ Pending |
+| README live | ✅ Created |
 
 ### Phase 2
 

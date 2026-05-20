@@ -33,9 +33,9 @@ result
 result-*
 
 # C++ CMake build artifacts
-src/HilTestFramework.Cpp/build/
-src/HilTestFramework.Cpp/out/
-src/HilTestFramework.Cpp/_deps/
+HilTestFramework.Cpp/build/
+HilTestFramework.Cpp/out/
+HilTestFramework.Cpp/_deps/
 CMakeCache.txt
 CMakeFiles/
 CMakeScripts/
@@ -64,7 +64,7 @@ out/
 *.vcxproj.user
 
 # Google Test downloaded source (FetchContent)
-src/HilTestFramework.Cpp/_deps/
+HilTestFramework.Cpp/_deps/
 
 # IDE
 .vscode/
