@@ -1,0 +1,42 @@
+name: Python Saleae Service
+
+on:
+  push:
+    paths:
+      - 'services/saleae-service/**'
+      - '.github/workflows/python-saleae.yml'
+  pull_request:
+    paths:
+      - 'services/saleae-service/**'
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install fastapi uvicorn pydantic pytest httpx
+          # logic2-automation not installed in CI — hardware not present
+          # integration tests requiring Saleae are skipped via pytest marks
+        working-directory: services/saleae-service
+
+      - name: Lint with ruff
+        run: |
+          pip install ruff
+          ruff check .
+        working-directory: services/saleae-service
+
+      - name: Run unit tests (hardware mocked)
+        run: pytest tests/ -m "not hardware" -v
+        working-directory: services/saleae-service
+        continue-on-error: true  # no tests yet — remove once pytest suite exists

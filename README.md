@@ -1,6 +1,6 @@
 # HIL Test Framework
 
-> May 2026 - C#/C++ test executive pivot, Python scoped to infrastructure only.
+> May 2026 - C++ test executive pivot, Python scoped to infrastructure only.
 
 ## Project Overview
 
@@ -84,12 +84,11 @@ The system is running firmware flashed on real hardware (dev kit hardware), with
 | C# hardware abstraction layer | ⬜ Pending |
 | C# test framework (xUnit/NUnit) | ⬜ Pending |
 | C# test executive (systemd) | ⬜ Pending |
-| C++ test executive | ⬜ Pending |
+| C++ test executive | In Progress |
 | README live | ⬜ Pending |
 
 ### Phase 2
 
-- Unblock Saleae FastAPI service (grpcio fix)
 - EFM32 FreeRTOS + I2C sensor + sensor fusion
 - Microstick II fault injector firmware
 - C# hardware abstraction layer with DI
