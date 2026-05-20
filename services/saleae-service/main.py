@@ -3,7 +3,6 @@ from fastapi import FastAPI, HTTPException, Depends
 from pydantic import BaseModel
 from contextlib import asynccontextmanager
 from typing import Optional
-import asyncio
 import logging
 import os
 from saleae import automation
