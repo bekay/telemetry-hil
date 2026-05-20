@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: influxdb
+  namespace: test-infra
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: influxdb
+  template:
+    metadata:
+      labels:
+        app: influxdb
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: nixos
+      containers:
+        - name: influxdb
+          image: influxdb:2.7-alpine
+          ports:
+            - containerPort: 8086
+          env:
+            - name: DOCKER_INFLUXDB_INIT_MODE
+              value: setup
+            - name: DOCKER_INFLUXDB_INIT_USERNAME
+              value: admin
+            - name: DOCKER_INFLUXDB_INIT_PASSWORD
+              value: adminpassword123
+            - name: DOCKER_INFLUXDB_INIT_ORG
+              value: test-infra
+            - name: DOCKER_INFLUXDB_INIT_BUCKET
+              value: radar-telemetry
+            - name: DOCKER_INFLUXDB_INIT_ADMIN_TOKEN
+              value: <INFLUXDB_ADMIN_TOKEN>
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: influxdb
+  namespace: test-infra
+spec:
+  selector:
+    app: influxdb
+  ports:
+    - name: http
+      port: 8086
+      targetPort: 8086

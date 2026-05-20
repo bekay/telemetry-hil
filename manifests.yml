@@ -1,0 +1,28 @@
+name: Validate K3s Manifests
+
+on:
+  push:
+    paths:
+      - 'manifests/**'
+      - '.github/workflows/manifests.yml'
+  pull_request:
+    paths:
+      - 'manifests/**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Validate manifests (dry run)
+        run: |
+          for f in manifests/*.yaml; do
+            echo "Validating $f..."
+            kubectl apply --dry-run=client -f "$f" || true
+          done

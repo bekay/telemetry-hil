@@ -1,0 +1,118 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: influxdb-writer-script
+  namespace: test-infra
+data:
+  writer.py: |
+    import asyncio
+    import nats
+    from influxdb_client import InfluxDBClient, Point
+    from influxdb_client.client.write_api import SYNCHRONOUS
+
+    NATS_URL = "nats://nats.test-infra.svc.cluster.local:4222"
+    INFLUX_URL = "http://influxdb.test-infra.svc.cluster.local:8086"
+    INFLUX_TOKEN = "C2meHbB8QzHGGL"
+    INFLUX_ORG = "test-infra"
+    INFLUX_BUCKET = "radar-telemetry"
+
+    client = InfluxDBClient(url=INFLUX_URL, token=INFLUX_TOKEN, org=INFLUX_ORG)
+    write_api = client.write_api(write_options=SYNCHRONOUS)
+
+    async def message_handler(msg):
+        subject = msg.subject
+        data = msg.data.decode()
+        print(f"Received [{subject}]: {data}")
+
+        try:
+            if subject.startswith("test.results."):
+                # Parse DET:<timestamp>,<width>,<amp>,<qual>,<ch>
+                if data.startswith("DET:"):
+                    parts = data[4:].strip().split(",")
+                    point = (
+                        Point("radar_detection")
+                        .tag("subject", subject)
+                        .field("timestamp_ms", int(parts[0]))
+                        .field("pulse_width_us", int(parts[1]))
+                        .field("amplitude", int(parts[2]))
+                        .field("quality", int(parts[3]))
+                        .field("channel", int(parts[4]))
+                    )
+                    write_api.write(bucket=INFLUX_BUCKET, record=point)
+
+                elif data.startswith("NOD:"):
+                    parts = data[4:].strip().split(",")
+                    point = (
+                        Point("radar_no_detection")
+                        .tag("subject", subject)
+                        .field("timestamp_ms", int(parts[0]))
+                    )
+                    write_api.write(bucket=INFLUX_BUCKET, record=point)
+
+                elif data.startswith("ERR:"):
+                    point = (
+                        Point("radar_error")
+                        .tag("subject", subject)
+                        .field("error", data[4:].strip())
+                    )
+                    write_api.write(bucket=INFLUX_BUCKET, record=point)
+
+        except Exception as e:
+            print(f"Write error: {e}")
+
+    async def main():
+        nc = await nats.connect(NATS_URL)
+        await nc.subscribe("test.results.>", cb=message_handler)
+        print("InfluxDB writer subscribed to test.results.>")
+        while True:
+            await asyncio.sleep(1)
+
+    if __name__ == "__main__":
+        asyncio.run(main())
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: influxdb-writer
+  namespace: test-infra
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: influxdb-writer
+  template:
+    metadata:
+      labels:
+        app: influxdb-writer
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: nixos
+      initContainers:
+        - name: install-deps
+          image: python:3.11-slim
+          command:
+            - sh
+            - -c
+            - pip install nats-py influxdb-client --target /deps
+          volumeMounts:
+            - name: deps
+              mountPath: /deps
+      containers:
+        - name: writer
+          image: python:3.11-slim
+          command:
+            - sh
+            - -c
+            - PYTHONPATH=/deps python /scripts/writer.py
+          volumeMounts:
+            - name: script
+              mountPath: /scripts
+            - name: deps
+              mountPath: /deps
+      volumes:
+        - name: script
+          configMap:
+            name: influxdb-writer-script
+        - name: deps
+          emptyDir: {}
