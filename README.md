@@ -1,6 +1,6 @@
 # HIL Test Framework
 
-> May 2026 - C++ test executive pivot, Python scoped to infrastructure only.
+> May 2026 - C# test executive pivot, Python scoped to infrastructure only.
 
 ## Project Overview
 
@@ -56,14 +56,17 @@ The system is running firmware flashed on real hardware (dev kit hardware), with
 
 ### Firmware
 
-**Radar Simulator** - 
+**Pressure, temperature, rotational velocity, and caliper data Simulator** - simulating a geothermal PTS caliper downhole logging tool
 
 - Commands:
   - `ID?` → device identity
   - `ST?` → current state/telemetry
   - `SC:x` → set scenario (0-3)
+    - 0: Normal operation
+    - 1: Degraded — occasional missed pulses
+    - 2: Noisy environment — pressure and/or temperature spikes
+    - 3: Fault state — sensor dropout, pegged or stuck sensor values
   - `RST` → reset to default state
-
 
 ## Phased Roadmap
 
@@ -81,19 +84,15 @@ The system is running firmware flashed on real hardware (dev kit hardware), with
 | GitHub Actions workflows | ✅ Created |
 | Python Saleae FastAPI service | In Progress |
 | EFM32 USB → P52 physical connection | ⬜ Pending |
-| C# hardware abstraction layer | ⬜ Pending |
-| C# test framework (xUnit/NUnit) | ⬜ Pending |
-| C# test executive (systemd) | ⬜ Pending |
-| C++ test executive | In Progress |
+| pytest hardware fixtures against Saleae service | ⬜ Pending |
+| GitHub Actions CI with mock tier | ⬜ Pending |
 | README live | ✅ Created |
 
 ### Phase 2
 
 - EFM32 FreeRTOS + I2C sensor + sensor fusion
 - Microstick II fault injector firmware
-- C# hardware abstraction layer with DI
-- C# xUnit test suite - all fault categories
-- GitHub Actions CI - mock tier on every push
+- C# test executive (WPF) + xUnit
 - Azure cloud deployment
 - Blazor WASM dashboard
 - Live demo URL at bekay.dev
@@ -104,4 +103,14 @@ The system is running firmware flashed on real hardware (dev kit hardware), with
 - Structured traceability (requirement_id)
 - Exportable test reports (PDF/JSON)
 - Nix Flakes dev environment
-- C++ serial validator CLI tool
+- Python CLI serial validator tool
+- C# hardware abstraction layer with DI
+
+## Architecture Decision Log
+
+- Python for hardware infrastructure - Saleae gRPC bindings are Python-native, FastAPI for REST exposure
+- K3s for orchestration - reproducible deployment across agent nodes with different hardware attached
+- NATS for messaging - lightweight pub/sub appropriate for edge/embedded context
+- Azure for cloud hosting - cost-efficient architecture with free messaging (SignalR and IoT Hub) options
+- pytest for test framework - already using python and don't want to introduce a new language in Phase 1 architecture
+- C# for test executive - primary production language, WPF for test operator-facing desktop UI
