@@ -23,7 +23,6 @@ class CaptureConfig(BaseModel):
     duration_seconds: float = 2.0
     digital_channels: list[int] = [0]
     sample_rate: int = 10_000_000
-    threshold_volts: float = 3.3
 
 class PulseResult(BaseModel):
     channel: int
@@ -99,7 +98,6 @@ def run_capture(
         device_config = automation.LogicDeviceConfiguration(
             enabled_digital_channels=config.digital_channels,
             digital_sample_rate=config.sample_rate,
-            digital_threshold_volts=config.threshold_volts,
         )
 
         capture_config = automation.CaptureConfiguration(
@@ -141,7 +139,7 @@ def parse_pulse_data(export_dir: str, channel: int, duration: float) -> PulseRes
     """Parse Saleae CSV export to extract pulse width metrics."""
     import csv
 
-    csv_path = f"{export_dir}/digital_ch{channel}.csv"
+    csv_path = f"{export_dir}/digital.csv"
     transitions = []
 
     try:
