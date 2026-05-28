@@ -1,13 +1,12 @@
-# HIL Test Framework
+# Forge HIL
 
 > May 2026 - C# test executive pivot, Python scoped to infrastructure only.
 
 ## Project Overview
 
-A hardware-in-the-loop (HIL) test framework spanning bare-metal embedded firmware through
-cloud observability.
+Hardware validation & simulation infrastructure.
 
-The system is running firmware flashed on real hardware (dev kit hardware), with real protocol communication, and simulated data for now (until I get the I2C pressure and temperature sensor). The idea is to have multiple different devices running the same test executive with access to the same containerized test tools, e.g. logic analyzer and fault injector. The test executive will store records of the test on a Azure SQL database with a simple API and frontend for demo purposes.
+The system is running firmware flashed on real hardware (dev kit hardware), with real protocol communication, and simulated data for now. The idea is to have multiple  devices running the same test executive with access to the same containerized test tools, e.g. logic analyzer and fault injector. The test executive will store records of the test on a Azure SQL database with a simple API and frontend for demo purposes.
 
 ## Hardware Used
 
@@ -16,7 +15,7 @@ The system is running firmware flashed on real hardware (dev kit hardware), with
 | x86_64 NixOS Workstation (VMware, Bridged) | K3s master (amd64), data services | Active |
 | x86_64 NixOS Workstation (P52 - laptop) | K3s agent (amd64), Logic 2 host, hardware attached | Active |
 | Saleae Logic 16 (digital only) | Capture signal on I2C, UART, SPI | Active |
-| Silicon Labs EFM32 Pearl Gecko | FreeRTOS, I2C sensor, UART output | In Progress |
+| Silicon Labs EFM32 Pearl Gecko | FreeRTOS, I2C emulated sensor data, UART output | In Progress |
 | Microchip Microstick II | USB-controlled fault injector - sits on UART line, injects physical faults | In Progress |
 | I2C sensor breakout | Real discrete sensor on Pearl Gecko I2C bus | In Progress |
 
@@ -30,7 +29,7 @@ The system is running firmware flashed on real hardware (dev kit hardware), with
 | influxdb | test-infra | VM (nixos) | ✅ Running |
 | influxdb-writer | test-infra | VM (nixos) | ✅ Running |
 | grafana | test-infra | VM (nixos) | ✅ Running (NodePort 30300) |
-| saleae-service | test-infra | P52 (k3s-agent) | In Progress |
+| saleae-service | test-infra | P52 (k3s-agent) | ✅ Running |
 
 ---
 
@@ -56,7 +55,7 @@ The system is running firmware flashed on real hardware (dev kit hardware), with
 
 ### Firmware
 
-**Pressure, temperature, rotational velocity, and caliper data Simulator** - simulating a geothermal PTS caliper downhole logging tool
+**Pressure, temperature, rotational velocity, caliper, and depth data Simulator** - simulating a geothermal PTS caliper downhole logging tool
 
 - Commands:
   - `ID?` → device identity
@@ -82,8 +81,8 @@ The system is running firmware flashed on real hardware (dev kit hardware), with
 | Grafana pod | ✅ Running |
 | Logic 2 on P52 (NixOS) | ✅ Running |
 | GitHub Actions workflows | ✅ Created |
-| Python Saleae FastAPI service | In Progress |
-| EFM32 USB → P52 physical connection | ⬜ Pending |
+| Python Saleae FastAPI service |✅ Running |
+| EFM32 USB → P52 physical connection | In Progress |
 | pytest hardware fixtures against Saleae service | ⬜ Pending |
 | GitHub Actions CI with mock tier | ⬜ Pending |
 | README live | ✅ Created |
