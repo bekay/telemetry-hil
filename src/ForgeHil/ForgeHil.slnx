@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="ForgeHil.Core/ForgeHil.Core.csproj" />
+  <Project Path="ForgeHil.Executive/ForgeHil.Executive.csproj" />
+</Solution>
