@@ -18,6 +18,15 @@ namespace ForgeHil.Core.Interfaces
         /// <summary>Raised on every parsed DET: frame (radar sim).</summary>
         event EventHandler<DetectionFrame> FrameReceived;
 
+        /// <summary>Raised on every parsed PRS: frame.</summary>
+        event EventHandler<PressureFrame> PressureReceived;
+
+        /// <summary>Raised on every parsed TMP: frame.</summary>
+        event EventHandler<TemperatureFrame> TemperatureReceived;
+
+        /// <summary>Raised on every parsed ROT: frame.</summary>
+        event EventHandler<RotationFrame> RotationReceived;
+
         /// <summary>Raised on every parsed DEP: frame.</summary>
         event EventHandler<DepthFrame> DepthReceived;
 

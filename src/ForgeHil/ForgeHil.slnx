@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="ForgeHil.Core/ForgeHil.Core.csproj" />
   <Project Path="ForgeHil.Executive/ForgeHil.Executive.csproj" />
+  <Project Path="ForgeHil.Tests/ForgeHil.Tests.csproj" Id="d17540a1-f0bb-4bc1-904f-36d9e087dd88" />
 </Solution>
