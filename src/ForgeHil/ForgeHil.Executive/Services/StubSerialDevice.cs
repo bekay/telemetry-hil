@@ -16,7 +16,7 @@ namespace ForgeHil.Executive.Services
     ///   Tension      0–50 kN
     ///   Line speed   0–5 m/s
     /// </summary>
-    public class SerialDevice : ISerialDevice
+    public class StubSerialDevice : ISerialDevice
     {
         private CancellationTokenSource? _cts;
         private DeviceConnectionState _state = DeviceConnectionState.Disconnected;

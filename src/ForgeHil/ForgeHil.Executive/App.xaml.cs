@@ -16,13 +16,19 @@ namespace ForgeHil
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            base.OnStartup(e);
-
             var services = new ServiceCollection();
 
-            services.AddSingleton<ISerialDevice, SerialDevice>();
-            services.AddSingleton<ISignalCapture, SignalCapture>();
-            services.AddSingleton<ITestPublisher, StubTestPublisher>();
+            bool useStubs = !e.Args.Contains("--hardware");
+
+            if (useStubs)
+            {
+                services.AddSingleton<ISerialDevice, StubSerialDevice>();
+                services.AddSingleton<ISignalCapture, StubSignalCapture>();
+                services.AddSingleton<ITestPublisher, StubTestPublisher>();
+            }
+            else
+            {
+            }
 
             // ViewModels
             services.AddSingleton<MainViewModel>();

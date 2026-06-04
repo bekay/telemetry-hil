@@ -3,7 +3,7 @@ using ForgeHil.Core.Models;
 
 namespace ForgeHil.Executive.Services
 {
-    public class SignalCapture : ISignalCapture
+    public class StubSignalCapture : ISignalCapture
     {
         public bool IsConnected { get; private set; }
 
