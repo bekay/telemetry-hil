@@ -1,4 +1,4 @@
-# Forge HIL
+# Telemetry HIL
 
 > May 2026 - C# test executive pivot, Python scoped to infrastructure only.
 
@@ -25,10 +25,10 @@ The system is running firmware flashed on real hardware (dev kit hardware), with
 │           │ /dev/ttyACM0         HTTP /capture                  │
 │           ▼                               ▲                     │
 │  ┌──────────────────────────────────────────────────────────┐   │
-│  │              C# WPF Executive (ForgeHil.Executive)       │   │
+│  │              C# WPF Executive (TelemetryHil.Executive)       │   │
 │  │                                                          │   │
 │  │   ISerialDevice → ISignalCapture → ITestPublisher        │   │
-│  │   ForgeHil.Core hardware abstraction interfaces          │   │
+│  │   TelemetryHil.Core hardware abstraction interfaces          │   │
 │  └─────────────────────────┬────────────────────────────────┘   │
 │                            │ NATS publish                       │
 └────────────────────────────┼────────────────────────────────────┘
@@ -74,7 +74,7 @@ The system is running firmware flashed on real hardware (dev kit hardware), with
 | Firmware | Bare metal C (EFM32), FreeRTOS (Phase 2) |
 | Signal capture | Python FastAPI + Saleae Logic 2 automation API |
 | Hardware abstraction | C# interfaces + dependency injection |
-| Test executive | C# WPF (ForgeHil.Executive) |
+| Test executive | C# WPF (TelemetryHil.Executive) |
 | Test framework | pytest hardware fixtures + C# xUnit |
 | C++ test layer | Google Test + Google Mock |
 | Message bus | NATS |
@@ -157,9 +157,9 @@ The system is running firmware flashed on real hardware (dev kit hardware), with
 
 | Component | Status |
 |-----------|--------|
-| ForgeHil.Core - hardware abstraction | 🔄 In progress |
-| ForgeHil.Executive - WPF executive | ⬜ Pending |
-| ForgeHil.Tests - xUnit | ⬜ Pending |
+| TelemetryHil.Core - hardware abstraction | 🔄 In progress |
+| TelemetryHil.Executive - WPF executive | ⬜ Pending |
+| TelemetryHil.Tests - xUnit | ⬜ Pending |
 | cpp-tests - Google Test / Mock | ⬜ Pending |
 | EFM32 FreeRTOS + PTS sensor firmware | ⬜ Pending |
 | Scenario config + parallel dispatch | ⬜ Pending |
