@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pyod-service
+  namespace: test-infra
+  labels:
+    app: pyod-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pyod-service
+  template:
+    metadata:
+      labels:
+        app: pyod-service
+    spec:
+      # Pin to VM node — same node as NATS and InfluxDB
+      nodeSelector:
+        kubernetes.io/hostname: nixos
+
+      containers:
+        - name: pyod-service
+          image: pyod-service:latest
+          imagePullPolicy: Never   # built locally on VM node
+
+          env:
+            - name: PYOD_NATS_URL
+              value: "nats://nats:4222"
+            - name: PYOD_BASELINE_DIR
+              value: "/var/lib/pyod-service/baselines"
+            - name: PYOD_DEFAULT_BASELINE_SIZE
+              value: "60"
+            - name: PYOD_DEFAULT_IFOREST_THRESHOLD
+              value: "0.70"
+            - name: PYOD_DEFAULT_HBOS_THRESHOLD
+              value: "0.70"
+
+          volumeMounts:
+            - name: baseline-storage
+              mountPath: /var/lib/pyod-service/baselines
+
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+
+      volumes:
+        - name: baseline-storage
+          hostPath:
+            path: /var/lib/pyod-service/baselines
+            type: DirectoryOrCreate
+---
+# No Service needed — pyod-service only communicates via NATS

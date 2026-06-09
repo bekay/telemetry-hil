@@ -137,43 +137,45 @@ The system is running firmware flashed on real hardware (dev kit hardware), with
 
 ## Phased Roadmap
 
-### Phase 1 - Complete
+### Phase 1 — Current
 
 | Component | Status |
 |-----------|--------|
-| EFM32 bare metal firmware (radar simulator) | ✅ Complete |
-| K3s cluster (VM + P52) | ✅ Complete |
-| NATS pod | ✅ Running |
-| InfluxDB pod | ✅ Running |
-| InfluxDB writer pod | ✅ Running |
-| Grafana pod | ✅ Running |
-| Logic 2 on P52 (NixOS) | ✅ Running |
-| GitHub Actions workflows | ✅ Created |
-| Saleae FastAPI service | ✅ Running |
-| EFM32 USB → P52 physical connection | ✅ Running |
-| README live | ✅ Created |
+| EFM32 bare metal firmware (radar sim) | ✅ Complete |
+| EFM32 → P52s physical connection | ✅ Complete |
+| K3s cluster (VM + P52s) | ✅ Complete |
+| NATS / InfluxDB / Grafana pods | ✅ Running |
+| Python Saleae FastAPI service | ✅ Complete |
+| TelemetryHil.Core interfaces + models | ✅ Complete |
+| TelemetryHil.Executive WPF shell | ✅ Complete (stub mode) |
+| TelemetryHil.Tests xUnit skeleton | ✅ Complete |
+| Scenario YAML config | ✅ Complete |
+| PyOD anomaly detection pod | ⬜ Next |
+| Cloud bridge pod (NATS → Azure SQL) | ⬜ Pending |
+| Azure SQL + Functions + SignalR setup | ⬜ Pending |
+| Next.js dashboard | ⬜ Pending |
+| Anomaly feedback in WPF executive | ⬜ Pending |
+| EFM32 FreeRTOS + I2C firmware (PTS) | ⬜ Pending |
+| Real SerialPortDevice implementation | ⬜ Pending |
+| Real HttpSignalCapture implementation | ⬜ Pending |
+| Real NatsTestPublisher implementation | ⬜ Pending |
 
-### Phase 2 - Current
+### Phase 2
 
-| Component | Status |
-|-----------|--------|
-| TelemetryHil.Core - hardware abstraction | 🔄 In progress |
-| TelemetryHil.Executive - WPF executive | ⬜ Pending |
-| TelemetryHil.Tests - xUnit | ⬜ Pending |
-| cpp-tests - Google Test / Mock | ⬜ Pending |
-| EFM32 FreeRTOS + PTS sensor firmware | ⬜ Pending |
-| Scenario config + parallel dispatch | ⬜ Pending |
-| Microstick II fault injector | ⬜ Pending |
-| Azure cloud + Blazor dashboard | ⬜ Pending |
+- EFM32 FreeRTOS + PTS sensor firmware
+- Dragonboard I2C slave firmware
+- Microstick II fault injector firmware
+- pytest hardware fixtures against Saleae service
+- GitHub Actions CI mock tier on every push
+- cpp-tests Google Test / Mock
 
 ### Phase 3
 
-- Test scheduling and orchestration via K3s
-- Structured traceability (requirement_id)
+- Saleae service as K3s pod
+- Structured traceability (requirement_id anchoring)
 - Exportable test reports (PDF/JSON)
 - Nix Flakes dev environment
-- Python CLI serial validator tool
-- C# hardware abstraction layer with DI
+- Python serial validator CLI
 
 ## Architecture Decision Log
 
