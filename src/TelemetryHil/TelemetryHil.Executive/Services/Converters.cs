@@ -74,4 +74,22 @@ namespace TelemetryHil.Executive.Services
             throw new NotImplementedException();
         }
     }
+
+    /// <summary>
+    /// Converts AnomalyCount (int) to a display string.
+    /// 0 → "—", N → "⚠ N"
+    /// </summary>
+    [ValueConversion(typeof(int), typeof(string))]
+    public class AnomalyCountConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is int count)
+                return count == 0 ? "—" : $"⚠ {count}";
+            return "—";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotImplementedException();
+    }
 }

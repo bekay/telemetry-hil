@@ -13,6 +13,7 @@
         <srv:BooleanToVisibilityConverter x:Key="BoolToVis"/>
         <srv:NullToVisibilityConverter    x:Key="NullToVis"/>
         <srv:PassFailConverter            x:Key="PassFail"/>
+        <srv:AnomalyCountConverter        x:Key="AnomalyCount"/>
     </Window.Resources>
 
     <Grid Margin="12">
@@ -571,22 +572,20 @@
                                 <GridViewColumn Header="Anomalies" Width="80">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock>
+                                            <TextBlock Text="{Binding AnomalyCount, Converter={StaticResource AnomalyCount}}">
                                                 <TextBlock.Style>
                                                     <Style TargetType="TextBlock">
-                                                        <Setter Property="Text" Value=""/>
                                                         <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
                                                         <Style.Triggers>
-                                                            <!-- Has anomalies — show count in warning color -->
                                                             <DataTrigger Binding="{Binding AnomalyCount}" Value="0">
-                                                                <Setter Property="Text" Value="—"/>
+                                                                <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding HasCritical}" Value="True">
+                                                                <Setter Property="Foreground" Value="{StaticResource ErrorBrush}"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
                                                 </TextBlock.Style>
-                                                <Run Text="⚠ " Foreground="{StaticResource WarningBrush}"/>
-                                                <Run Text="{Binding AnomalyCount}"
-                                                     Foreground="{StaticResource WarningBrush}"/>
                                             </TextBlock>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
