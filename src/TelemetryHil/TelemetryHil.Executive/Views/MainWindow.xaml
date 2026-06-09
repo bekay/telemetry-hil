@@ -1,47 +1,48 @@
 ﻿<Window x:Class="TelemetryHil.Executive.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:serv="clr-namespace:TelemetryHil.Executive.Services"
-        Title="TelemetryHil — Hardware Validation Executive"
-        Width="1280" Height="900"
-        MinWidth="1000" MinHeight="700"
+        xmlns:srv="clr-namespace:TelemetryHil.Executive.Services"
+        Title="TelemetryHIL — Hardware Validation Executive"
+        Width="1280" Height="960"
+        MinWidth="1000" MinHeight="720"
         Background="{StaticResource BackgroundBrush}"
         Foreground="{StaticResource TextPrimaryBrush}"
         FontFamily="{StaticResource UIFont}">
 
     <Window.Resources>
-        <serv:BooleanToVisibilityConverter x:Key="BoolToVis" />
-        <serv:NullToVisibilityConverter x:Key="NullToVis" />
-        <serv:PassFailConverter x:Key="PassFail" />
+        <srv:BooleanToVisibilityConverter x:Key="BoolToVis"/>
+        <srv:NullToVisibilityConverter    x:Key="NullToVis"/>
+        <srv:PassFailConverter            x:Key="PassFail"/>
     </Window.Resources>
 
     <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <!-- title bar     -->
+            <!-- title bar      -->
             <RowDefinition Height="Auto"/>
-            <!-- status strip  -->
+            <!-- status strip   -->
             <RowDefinition Height="Auto"/>
-            <!-- sensor strip  -->
+            <!-- sensor strip   -->
+            <RowDefinition Height="Auto"/>
+            <!-- anomaly banner -->
             <RowDefinition Height="*"/>
-            <!-- main panels   -->
+            <!-- main panels    -->
             <RowDefinition Height="180"/>
-            <!-- UART feed     -->
+            <!-- UART feed      -->
         </Grid.RowDefinitions>
 
         <!-- ── Title bar ──────────────────────────────────────────────────── -->
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
-            <TextBlock Text="Tele Me A Tree"
+            <TextBlock Text="TELEMETRY"
                        Foreground="{StaticResource AccentBrush}"
-                       FontSize="18" FontWeight="Bold" />
+                       FontSize="18" FontWeight="Bold"/>
             <TextBlock Text="HIL"
                        Foreground="{StaticResource TextPrimaryBrush}"
                        FontSize="18" FontWeight="Light"
                        Margin="6,0,0,0"/>
             <TextBlock Text="Hardware Validation Executive"
                        Foreground="{StaticResource TextSecondaryBrush}"
-                       FontSize="11"
-                       VerticalAlignment="Bottom"
+                       FontSize="11" VerticalAlignment="Bottom"
                        Margin="14,0,0,2"/>
         </StackPanel>
 
@@ -49,7 +50,6 @@
         <Border Grid.Row="1" Style="{StaticResource CardPanel}" Margin="0,0,0,6">
             <StackPanel Orientation="Horizontal">
 
-                <!-- Device -->
                 <StackPanel Orientation="Horizontal" Margin="0,0,16,0">
                     <Ellipse Width="8" Height="8" VerticalAlignment="Center" Margin="0,0,6,0">
                         <Ellipse.Style>
@@ -72,7 +72,6 @@
 
                 <Rectangle Width="1" Fill="{StaticResource BorderBrush}" Margin="0,0,16,0"/>
 
-                <!-- Saleae -->
                 <StackPanel Orientation="Horizontal" Margin="0,0,16,0">
                     <Ellipse Width="8" Height="8" VerticalAlignment="Center" Margin="0,0,6,0">
                         <Ellipse.Style>
@@ -92,7 +91,6 @@
 
                 <Rectangle Width="1" Fill="{StaticResource BorderBrush}" Margin="0,0,16,0"/>
 
-                <!-- NATS -->
                 <StackPanel Orientation="Horizontal" Margin="0,0,16,0">
                     <Ellipse Width="8" Height="8" VerticalAlignment="Center" Margin="0,0,6,0">
                         <Ellipse.Style>
@@ -115,7 +113,6 @@
 
                 <Rectangle Width="1" Fill="{StaticResource BorderBrush}" Margin="0,0,16,0"/>
 
-                <!-- Firmware -->
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Style="{StaticResource FieldLabel}" Text="FIRMWARE" Margin="0,0,6,0"/>
                     <TextBlock Style="{StaticResource FieldValue}"
@@ -143,99 +140,170 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Pressure -->
                 <StackPanel Grid.Column="0" HorizontalAlignment="Center">
-                    <TextBlock Style="{StaticResource FieldLabel}"
-                               Text="PRESSURE"
-                               HorizontalAlignment="Center"
-                               Margin="0,0,0,3"/>
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="PRESSURE"
+                               HorizontalAlignment="Center" Margin="0,0,0,3"/>
                     <TextBlock Style="{StaticResource FieldValue}"
                                Text="{Binding PressureDisplay}"
                                HorizontalAlignment="Center"
-                               FontFamily="{StaticResource MonoFont}"
-                               FontSize="13"/>
+                               FontFamily="{StaticResource MonoFont}" FontSize="13"/>
                 </StackPanel>
 
                 <Rectangle Grid.Column="1" Fill="{StaticResource BorderBrush}"/>
 
-                <!-- Temperature -->
                 <StackPanel Grid.Column="2" HorizontalAlignment="Center">
-                    <TextBlock Style="{StaticResource FieldLabel}"
-                               Text="TEMPERATURE"
-                               HorizontalAlignment="Center"
-                               Margin="0,0,0,3"/>
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="TEMPERATURE"
+                               HorizontalAlignment="Center" Margin="0,0,0,3"/>
                     <TextBlock Style="{StaticResource FieldValue}"
                                Text="{Binding TemperatureDisplay}"
                                HorizontalAlignment="Center"
-                               FontFamily="{StaticResource MonoFont}"
-                               FontSize="13"/>
+                               FontFamily="{StaticResource MonoFont}" FontSize="13"/>
                 </StackPanel>
 
                 <Rectangle Grid.Column="3" Fill="{StaticResource BorderBrush}"/>
 
-                <!-- Rotation -->
                 <StackPanel Grid.Column="4" HorizontalAlignment="Center">
-                    <TextBlock Style="{StaticResource FieldLabel}"
-                               Text="ROTATION"
-                               HorizontalAlignment="Center"
-                               Margin="0,0,0,3"/>
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="ROTATION"
+                               HorizontalAlignment="Center" Margin="0,0,0,3"/>
                     <TextBlock Style="{StaticResource FieldValue}"
                                Text="{Binding RotationDisplay}"
                                HorizontalAlignment="Center"
-                               FontFamily="{StaticResource MonoFont}"
-                               FontSize="13"/>
+                               FontFamily="{StaticResource MonoFont}" FontSize="13"/>
                 </StackPanel>
 
                 <Rectangle Grid.Column="5" Fill="{StaticResource BorderBrush}"/>
 
-                <!-- Depth -->
                 <StackPanel Grid.Column="6" HorizontalAlignment="Center">
-                    <TextBlock Style="{StaticResource FieldLabel}"
-                               Text="DEPTH"
-                               HorizontalAlignment="Center"
-                               Margin="0,0,0,3"/>
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="DEPTH"
+                               HorizontalAlignment="Center" Margin="0,0,0,3"/>
                     <TextBlock Style="{StaticResource FieldValue}"
                                Text="{Binding DepthDisplay}"
                                HorizontalAlignment="Center"
-                               FontFamily="{StaticResource MonoFont}"
-                               FontSize="13"/>
+                               FontFamily="{StaticResource MonoFont}" FontSize="13"/>
                 </StackPanel>
 
                 <Rectangle Grid.Column="7" Fill="{StaticResource BorderBrush}"/>
 
-                <!-- Tension -->
                 <StackPanel Grid.Column="8" HorizontalAlignment="Center">
-                    <TextBlock Style="{StaticResource FieldLabel}"
-                               Text="TENSION"
-                               HorizontalAlignment="Center"
-                               Margin="0,0,0,3"/>
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="TENSION"
+                               HorizontalAlignment="Center" Margin="0,0,0,3"/>
                     <TextBlock Style="{StaticResource FieldValue}"
                                Text="{Binding TensionDisplay}"
                                HorizontalAlignment="Center"
-                               FontFamily="{StaticResource MonoFont}"
-                               FontSize="13"/>
+                               FontFamily="{StaticResource MonoFont}" FontSize="13"/>
                 </StackPanel>
 
                 <Rectangle Grid.Column="9" Fill="{StaticResource BorderBrush}"/>
 
-                <!-- Line Speed -->
                 <StackPanel Grid.Column="10" HorizontalAlignment="Center">
-                    <TextBlock Style="{StaticResource FieldLabel}"
-                               Text="LINE SPEED"
-                               HorizontalAlignment="Center"
-                               Margin="0,0,0,3"/>
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="LINE SPEED"
+                               HorizontalAlignment="Center" Margin="0,0,0,3"/>
                     <TextBlock Style="{StaticResource FieldValue}"
                                Text="{Binding LineSpeedDisplay}"
                                HorizontalAlignment="Center"
-                               FontFamily="{StaticResource MonoFont}"
-                               FontSize="13"/>
+                               FontFamily="{StaticResource MonoFont}" FontSize="13"/>
                 </StackPanel>
 
             </Grid>
         </Border>
 
+        <!-- ── Anomaly banner ─────────────────────────────────────────────── -->
+        <Border Grid.Row="3"
+                Margin="0,0,0,6"
+                CornerRadius="6"
+                BorderThickness="1"
+                Padding="12,10"
+                Visibility="{Binding AnomalyBannerVisible, Converter={StaticResource BoolToVis}}">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Background"   Value="#1AFFC107"/>
+                    <Setter Property="BorderBrush"  Value="{StaticResource WarningBrush}"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsBannerCritical}" Value="True">
+                            <Setter Property="Background"  Value="#1AFF4B5C"/>
+                            <Setter Property="BorderBrush" Value="{StaticResource ErrorBrush}"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Left: title + detail -->
+                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding AnomalyBannerTitle}"
+                               FontWeight="SemiBold" FontSize="12"
+                               Margin="0,0,0,3">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="{StaticResource WarningBrush}"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsBannerCritical}" Value="True">
+                                        <Setter Property="Foreground" Value="{StaticResource ErrorBrush}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                    <TextBlock Text="{Binding AnomalyBannerDetail}"
+                               Style="{StaticResource FieldLabel}"
+                               FontFamily="{StaticResource MonoFont}"
+                               FontSize="11"/>
+                </StackPanel>
+
+                <!-- Right: action buttons -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+
+                    <Button Content="✕  Fail"
+                            Command="{Binding AnomalyFailCommand}"
+                            Padding="12,6" Margin="0,0,6,0"
+                            Style="{StaticResource DangerButton}"/>
+
+                    <Button Content="⚠  Warn + Continue"
+                            Command="{Binding AnomalyWarnContinueCommand}"
+                            Padding="12,6" Margin="0,0,6,0">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+                                <Setter Property="Background" Value="#FF6B4E00"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource WarningBrush}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+
+                    <Button Content="↺  Warn + Retest"
+                            Command="{Binding AnomalyWarnRetestCommand}"
+                            Padding="12,6" Margin="0,0,6,0">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+                                <Setter Property="Background" Value="#FF6B4E00"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource WarningBrush}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+
+                    <Button Content="—  Dismiss"
+                            Command="{Binding AnomalyDismissCommand}"
+                            Padding="12,6"
+                            Style="{StaticResource PrimaryButton}"/>
+
+                </StackPanel>
+            </Grid>
+        </Border>
+
         <!-- ── Main panels ─────────────────────────────────────────────────── -->
-        <Grid Grid.Row="3" Margin="0,0,0,6">
+        <Grid Grid.Row="4" Margin="0,0,0,6">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="220"/>
                 <ColumnDefinition Width="8"/>
@@ -244,13 +312,12 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- ── Left column: device / saleae / nats ──────────────────── -->
+            <!-- ── Left: device / saleae / nats ─────────────────────────── -->
             <StackPanel Grid.Column="0">
 
-                <!-- Device -->
                 <Border Style="{StaticResource CardPanel}" Margin="0,0,0,6">
                     <StackPanel>
-                        <TextBlock Style="{StaticResource SectionHeader}" Text="DEVICE" />
+                        <TextBlock Style="{StaticResource SectionHeader}" Text="DEVICE"/>
                         <Grid Margin="0,0,0,8">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="70"/>
@@ -261,8 +328,7 @@
                                 <RowDefinition Height="24"/>
                                 <RowDefinition Height="24"/>
                             </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Grid.Column="0"
-                                       Style="{StaticResource FieldLabel}" Text="Port"/>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource FieldLabel}" Text="Port"/>
                             <TextBox   Grid.Row="0" Grid.Column="1"
                                        Text="{Binding PortName, UpdateSourceTrigger=PropertyChanged}"
                                        Background="#FF0A0C12"
@@ -270,15 +336,11 @@
                                        BorderBrush="{StaticResource BorderBrush}"
                                        BorderThickness="1" Padding="4,2"
                                        FontFamily="{StaticResource MonoFont}" FontSize="11"/>
-                            <TextBlock Grid.Row="1" Grid.Column="0"
-                                       Style="{StaticResource FieldLabel}" Text="Status"/>
-                            <TextBlock Grid.Row="1" Grid.Column="1"
-                                       Style="{StaticResource FieldValue}"
+                            <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource FieldLabel}" Text="Status"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource FieldValue}"
                                        Text="{Binding DeviceStateLabel}"/>
-                            <TextBlock Grid.Row="2" Grid.Column="0"
-                                       Style="{StaticResource FieldLabel}" Text="Last seen"/>
-                            <TextBlock Grid.Row="2" Grid.Column="1"
-                                       Style="{StaticResource FieldValue}"
+                            <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource FieldLabel}" Text="Last seen"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" Style="{StaticResource FieldValue}"
                                        Text="{Binding LastSeen}"
                                        FontFamily="{StaticResource MonoFont}" FontSize="11"/>
                         </Grid>
@@ -293,10 +355,9 @@
                     </StackPanel>
                 </Border>
 
-                <!-- Signal Capture -->
                 <Border Style="{StaticResource CardPanel}" Margin="0,0,0,6">
                     <StackPanel>
-                        <TextBlock Style="{StaticResource SectionHeader}" Text="SIGNAL CAPTURE" />
+                        <TextBlock Style="{StaticResource SectionHeader}" Text="SIGNAL CAPTURE"/>
                         <Grid Margin="0,0,0,8">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="80"/>
@@ -306,15 +367,11 @@
                                 <RowDefinition Height="24"/>
                                 <RowDefinition Height="24"/>
                             </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Grid.Column="0"
-                                       Style="{StaticResource FieldLabel}" Text="Status"/>
-                            <TextBlock Grid.Row="0" Grid.Column="1"
-                                       Style="{StaticResource FieldValue}"
+                            <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource FieldLabel}" Text="Status"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Style="{StaticResource FieldValue}"
                                        Text="{Binding SaleaeStateLabel}"/>
-                            <TextBlock Grid.Row="1" Grid.Column="0"
-                                       Style="{StaticResource FieldLabel}" Text="Last capture"/>
-                            <TextBlock Grid.Row="1" Grid.Column="1"
-                                       Style="{StaticResource FieldValue}"
+                            <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource FieldLabel}" Text="Last capture"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource FieldValue}"
                                        Text="{Binding LastCaptureInfo}" FontSize="11"/>
                         </Grid>
                         <Button Style="{StaticResource PrimaryButton}" Content="Check Health"
@@ -323,10 +380,9 @@
                     </StackPanel>
                 </Border>
 
-                <!-- NATS -->
                 <Border Style="{StaticResource CardPanel}">
                     <StackPanel>
-                        <TextBlock Style="{StaticResource SectionHeader}" Text="NATS" />
+                        <TextBlock Style="{StaticResource SectionHeader}" Text="NATS"/>
                         <Grid Margin="0,0,0,8">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="50"/>
@@ -336,8 +392,7 @@
                                 <RowDefinition Height="24"/>
                                 <RowDefinition Height="24"/>
                             </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Grid.Column="0"
-                                       Style="{StaticResource FieldLabel}" Text="URL"/>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource FieldLabel}" Text="URL"/>
                             <TextBox   Grid.Row="0" Grid.Column="1"
                                        Text="{Binding NatsUrl, UpdateSourceTrigger=PropertyChanged}"
                                        Background="#FF0A0C12"
@@ -345,10 +400,8 @@
                                        BorderBrush="{StaticResource BorderBrush}"
                                        BorderThickness="1" Padding="4,2"
                                        FontFamily="{StaticResource MonoFont}" FontSize="10"/>
-                            <TextBlock Grid.Row="1" Grid.Column="0"
-                                       Style="{StaticResource FieldLabel}" Text="Status"/>
-                            <TextBlock Grid.Row="1" Grid.Column="1"
-                                       Style="{StaticResource FieldValue}"
+                            <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource FieldLabel}" Text="Status"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource FieldValue}"
                                        Text="{Binding NatsStateLabel}"/>
                         </Grid>
                         <Button Style="{StaticResource PrimaryButton}" Content="Connect"
@@ -363,10 +416,8 @@
             <Border Grid.Column="2" Style="{StaticResource CardPanel}">
                 <DockPanel LastChildFill="False">
                     <TextBlock DockPanel.Dock="Top"
-                               Style="{StaticResource SectionHeader}"
-                               Text="SCENARIO" />
+                               Style="{StaticResource SectionHeader}" Text="SCENARIO"/>
 
-                    <!-- Scenario picker -->
                     <StackPanel DockPanel.Dock="Top" Margin="0,0,0,8">
                         <TextBlock Style="{StaticResource FieldLabel}"
                                    Text="Scenario" Margin="0,0,0,4"/>
@@ -375,7 +426,7 @@
                                   DisplayMemberPath="Name"/>
                     </StackPanel>
 
-                    <!-- Selected scenario details -->
+                    <!-- Scenario details -->
                     <Border DockPanel.Dock="Top"
                             Background="#FF0A0C12" CornerRadius="4" Padding="8"
                             Margin="0,0,0,8"
@@ -446,7 +497,7 @@
                                    FontSize="11" FontWeight="SemiBold"/>
                     </Border>
 
-                    <!-- Run / Cancel buttons -->
+                    <!-- Run / Cancel -->
                     <Button DockPanel.Dock="Top"
                             Style="{StaticResource PrimaryButton}"
                             Content="▶  Run Scenario"
@@ -458,7 +509,27 @@
                             Style="{StaticResource DangerButton}"
                             Content="■  Cancel"
                             Command="{Binding CancelRunCommand}"
-                            HorizontalAlignment="Stretch"/>
+                            HorizontalAlignment="Stretch"
+                            Margin="0,0,0,6"/>
+
+                    <!-- Inject anomaly (stub mode) -->
+                    <Button DockPanel.Dock="Top"
+                            Content="⚡  Inject Anomaly"
+                            Command="{Binding InjectStubAnomalyCommand}"
+                            HorizontalAlignment="Stretch"
+                            Padding="12,6">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+                                <Setter Property="Background" Value="#FF2A1A00"/>
+                                <Setter Property="Foreground" Value="{StaticResource WarningBrush}"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#FF4A3200"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
 
                 </DockPanel>
             </Border>
@@ -467,16 +538,15 @@
             <Border Grid.Column="4" Style="{StaticResource CardPanel}">
                 <DockPanel>
                     <TextBlock DockPanel.Dock="Top"
-                               Style="{StaticResource SectionHeader}"
-                               Text="RESULTS" />
+                               Style="{StaticResource SectionHeader}" Text="RESULTS"/>
                     <ListView ItemsSource="{Binding Results}"
                               Background="Transparent" BorderThickness="0"
                               Foreground="{StaticResource TextPrimaryBrush}">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="Time" Width="80"
+                                <GridViewColumn Header="Time" Width="75"
                                     DisplayMemberBinding="{Binding ExecutedAt, StringFormat=HH:mm:ss}"/>
-                                <GridViewColumn Header="Scenario" Width="160"
+                                <GridViewColumn Header="Scenario" Width="155"
                                     DisplayMemberBinding="{Binding ScenarioName}"/>
                                 <GridViewColumn Header="Result" Width="55">
                                     <GridViewColumn.CellTemplate>
@@ -486,12 +556,10 @@
                                                     <Style TargetType="TextBlock">
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding Passed}" Value="True">
-                                                                <Setter Property="Foreground"
-                                                                        Value="{StaticResource SuccessBrush}"/>
+                                                                <Setter Property="Foreground" Value="{StaticResource SuccessBrush}"/>
                                                             </DataTrigger>
                                                             <DataTrigger Binding="{Binding Passed}" Value="False">
-                                                                <Setter Property="Foreground"
-                                                                        Value="{StaticResource ErrorBrush}"/>
+                                                                <Setter Property="Foreground" Value="{StaticResource ErrorBrush}"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -500,11 +568,34 @@
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
+                                <GridViewColumn Header="Anomalies" Width="80">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock>
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Text" Value=""/>
+                                                        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+                                                        <Style.Triggers>
+                                                            <!-- Has anomalies — show count in warning color -->
+                                                            <DataTrigger Binding="{Binding AnomalyCount}" Value="0">
+                                                                <Setter Property="Text" Value="—"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                                <Run Text="⚠ " Foreground="{StaticResource WarningBrush}"/>
+                                                <Run Text="{Binding AnomalyCount}"
+                                                     Foreground="{StaticResource WarningBrush}"/>
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
                                 <GridViewColumn Header="Pulses" Width="55"
                                     DisplayMemberBinding="{Binding SignalCapture.PulseCount}"/>
                                 <GridViewColumn Header="Avg µs" Width="65"
                                     DisplayMemberBinding="{Binding SignalCapture.AvgPulseWidthUs, StringFormat=F1}"/>
-                                <GridViewColumn Header="Failure" Width="160"
+                                <GridViewColumn Header="Failure" Width="150"
                                     DisplayMemberBinding="{Binding FailureReason}"/>
                             </GridView>
                         </ListView.View>
@@ -515,7 +606,7 @@
         </Grid>
 
         <!-- ── UART feed ───────────────────────────────────────────────────── -->
-        <Border Grid.Row="4" Style="{StaticResource CardPanel}" Padding="0">
+        <Border Grid.Row="5" Style="{StaticResource CardPanel}" Padding="0">
             <DockPanel>
                 <TextBlock DockPanel.Dock="Top"
                            Style="{StaticResource SectionHeader}"

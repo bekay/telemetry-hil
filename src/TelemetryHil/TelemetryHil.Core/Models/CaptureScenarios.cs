@@ -14,8 +14,6 @@
         int SensorMode,
         string FaultInjection,
         double DurationSeconds,
-
-        // Static simulation values — all six sensors
         double SimPressurePsi = 5000.0,
         double SimTemperatureC = 85.0,
         double SimRotationRpm = 1500.0,
@@ -29,6 +27,14 @@
         bool Passed,
         string? FailureReason,
         DateTimeOffset ExecutedAt,
-        CaptureResult? SignalCapture
-    );
+        CaptureResult? SignalCapture,
+        IReadOnlyList<AnomalyEvent> Anomalies
+    )
+    {
+        /// <summary>Count of anomaly events that fired during this run.</summary>
+        public int AnomalyCount => Anomalies.Count;
+
+        /// <summary>True if any anomaly reached Critical severity.</summary>
+        public bool HasCritical => Anomalies.Any(a => a.Severity == AnomalySeverity.Critical);
+    }
 }
