@@ -17,7 +17,7 @@ spec:
     spec:
       # Pin to VM node — same node as NATS and InfluxDB
       nodeSelector:
-        kubernetes.io/hostname: nixos
+        kubernetes.io/hostname: k3s-server
 
       containers:
         - name: pyod-service
