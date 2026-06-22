@@ -150,7 +150,7 @@ The system is running firmware flashed on real hardware (dev kit hardware), with
 | TelemetryHil.Executive WPF shell | ✅ Complete (stub mode) |
 | TelemetryHil.Tests xUnit skeleton | ✅ Complete |
 | Scenario YAML config | ✅ Complete |
-| PyOD anomaly detection pod | ⬜ Next |
+| PyOD pod | ✅ Running on VM |
 | Cloud bridge pod (NATS → Azure SQL) | ⬜ Pending |
 | Azure SQL + Functions + SignalR setup | ⬜ Pending |
 | Next.js dashboard | ⬜ Pending |
