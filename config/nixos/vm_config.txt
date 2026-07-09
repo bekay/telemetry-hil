@@ -1,0 +1,9 @@
+cd ~/pyod-service
+docker build -t pyod-service:latest .
+docker save pyod-service:latest -o pyod-service.tar
+sudo ctr --namespace k8s.io images import pyod-service.tar
+kubectl apply -f ~/telemetry-hil/manifests/vm/pyod-service.yaml
+kubectl logs -n test-infra -l app=pyod-service -f
+
+
+192.168.8.240 VM IP

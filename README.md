@@ -76,7 +76,6 @@ The system is running firmware flashed on real hardware (dev kit hardware), with
 | Hardware abstraction | C# interfaces + dependency injection |
 | Test executive | C# WPF (TelemetryHil.Executive) |
 | Test framework | pytest hardware fixtures + C# xUnit |
-| C++ test layer | Google Test + Google Mock |
 | Message bus | NATS |
 | Time-series storage | InfluxDB |
 | Visualization | Grafana (local) + Blazor WASM (cloud, Phase 2) |
@@ -137,8 +136,9 @@ The system is running firmware flashed on real hardware (dev kit hardware), with
 
 ## Phased Roadmap
 
-### Phase 1 — Current
+### Phase 1
 
+**Goal:** one real test runs end-to-end on physical hardware with a real verdict.
 | Component | Status |
 |-----------|--------|
 | EFM32 bare metal firmware (radar sim) | ✅ Complete |
@@ -151,31 +151,84 @@ The system is running firmware flashed on real hardware (dev kit hardware), with
 | TelemetryHil.Tests xUnit skeleton | ✅ Complete |
 | Scenario YAML config | ✅ Complete |
 | PyOD pod | ✅ Running on VM |
-| Cloud bridge pod (NATS → Azure SQL) | ⬜ Pending |
-| Azure SQL + Functions + SignalR setup | ⬜ Pending |
-| Next.js dashboard | ⬜ Pending |
-| Anomaly feedback in WPF executive | ⬜ Pending |
-| EFM32 FreeRTOS + I2C firmware (PTS) | ⬜ Pending |
-| Real SerialPortDevice implementation | ⬜ Pending |
-| Real HttpSignalCapture implementation | ⬜ Pending |
-| Real NatsTestPublisher implementation | ⬜ Pending |
+| Implement `SerialPortDevice` (retire stub as the default path)
+| Implement `HttpSignalCapture` against the Saleae capture service
+| Implement `NatsTestPublisher`
+| EFM32 firmware emits all four scenario profiles on real UART: `normal / degraded / noisy / fault`
+| Minimal pass/fail evaluation in the executive against real captured data
 
-### Phase 2
+**Exit demo:** `run scenario=fault` → real hardware → real capture → verdict → log output.
+Capture a ~60s GIF for the README.
 
-- EFM32 FreeRTOS + PTS sensor firmware
-- Dragonboard I2C slave firmware
-- Microstick II fault injector firmware
-- pytest hardware fixtures against Saleae service
-- GitHub Actions CI mock tier on every push
-- cpp-tests Google Test / Mock
+---
 
-### Phase 3
+### Phase 2 — pytest as the test-definition layer
 
-- Saleae service as K3s pod
-- Structured traceability (requirement_id anchoring)
-- Exportable test reports (PDF/JSON)
-- Nix Flakes dev environment
-- Python serial validator CLI
+**Goal:** Python owns test definition and orchestration; C# is the operator shell.
+
+- [ ] Hardware fixtures: `serial_device`, `signal_capture`, `nats_bus`
+  - [ ] Correct session/function scoping
+  - [ ] Teardown that safes the hardware on failure/abort
+- [ ] Parametrize the four scenarios across tests
+- [ ] Tier markers: `@pytest.mark.hil` (real hardware) and `@pytest.mark.mock` (runs anywhere)
+- [ ] Package the Python service properly: `pyproject.toml`, type hints, `ruff` + `mypy` in pre-commit
+- [ ] Rework the C# executive to invoke pytest runs and display live status
+  (operator UI over a Python test core)
+
+**Exit demo:** `pytest -m hil` executes real hardware tests; `pytest -m mock` passes on any machine.
+
+---
+
+### Phase 3 — Three-tier CI
+
+**Goal:** the repo demonstrates a hardware-validated release pipeline in miniature.
+
+- [ ] GitHub Actions on every push: firmware build, C++ build + unit tests, `pytest -m mock`
+- [ ] Self-hosted runner (P52s, hardware attached) runs `pytest -m hil` on release branches / manual dispatch
+- [ ] Test report artifacts uploaded per run
+- [ ] Status badges in the README
+
+**Exit demo:** a PR shows green mock-tier checks; a tagged release shows a hardware-tier run.
+
+---
+
+## Phase 4 — C++ signal-analysis engine
+
+**Goal:** C++ owns a performance-justified component: decoding and analyzing raw captures.
+
+- [ ] Decoder/analysis library over raw Saleae capture data:
+  - [ ] UART frame decoding
+  - [ ] Inter-frame timing statistics
+  - [ ] Glitch / edge anomaly detection
+- [ ] Modern C++ throughout: RAII, move semantics, `std::thread` / `std::chrono`, spans
+- [ ] CMake + GoogleTest
+- [ ] pybind11 binding so pytest calls the engine as its analysis backend
+- [ ] ASan/UBSan and clang-tidy wired into CI (extends Phase 3)
+
+**Exit demo:** pytest verdicts computed by the C++ engine; README benchmark note
+(e.g., "decodes an N-hour capture in X ms").
+
+---
+
+## Phase 5 — Fault injection & traceability
+
+**Goal:** physical fault injection and regulated-style reporting — the parts that make it HIL.
+
+- [ ] Microstick II fault injector on the live UART line: dropout, corruption, timing skew
+- [ ] Fault injector controlled from a pytest fixture
+- [ ] Requirement-ID traceability: each test maps to a requirement ID
+- [ ] Exportable run report (HTML/PDF): firmware hash, hardware serials, timestamps, verdicts
+
+**Exit demo:** inject a physical fault mid-test, watch the verdict flip, export a traceable report.
+
+---
+
+## Phase 6 — Optional garnish (only after Phases 1–5)
+
+- [ ] Single PyOD classifier distinguishing `degraded` vs `fault` telemetry
+- [ ] Grafana / InfluxDB observability tier
+
+**Deferred :** Azure SQL + SignalR cloud tier, secondary dashboard.
 
 ## Architecture Decision Log
 
