@@ -3,7 +3,7 @@
 *.env.local
 
 # EFM32 Simplicity Studio build artifacts
-firmware/efm32/GNU\ ARM*/
+firmware/efm32/*/GNU\ ARM*/
 firmware/efm32/*.axf
 firmware/efm32/*.bin
 firmware/efm32/*.hex

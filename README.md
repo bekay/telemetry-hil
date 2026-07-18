@@ -1,12 +1,8 @@
 # Telemetry HIL
 
-> May 2026 - C# test executive pivot, Python scoped to infrastructure only.
-
 ## Project Overview
 
-Hardware validation & simulation infrastructure.
-
-The system is running firmware flashed on real hardware (dev kit hardware), with real protocol communication, and simulated data for now. The idea is to have multiple  devices running the same test executive with access to the same containerized test tools, e.g. logic analyzer and fault injector. The test executive will store records of the test on a Azure SQL database with a simple API and frontend for demo purposes.
+Testing platform for geothermal logging devices and a DIY putting stats device via BLE. Supported devices will have access to containerized test tools like a logic analyzer and fault injector.
 
 ## Architecture
 
@@ -151,14 +147,54 @@ The system is running firmware flashed on real hardware (dev kit hardware), with
 | TelemetryHil.Tests xUnit skeleton | ✅ Complete |
 | Scenario YAML config | ✅ Complete |
 | PyOD pod | ✅ Running on VM |
-| Implement `SerialPortDevice` (retire stub as the default path)
-| Implement `HttpSignalCapture` against the Saleae capture service
-| Implement `NatsTestPublisher`
-| EFM32 firmware emits all four scenario profiles on real UART: `normal / degraded / noisy / fault`
-| Minimal pass/fail evaluation in the executive against real captured data
+| Implement `SerialPortDevice` (retire stub as the default path) | ✅ Code complete — needs P52s/device verification |
+| Implement `HttpSignalCapture` against the Saleae capture service | ✅ Code complete — needs P52s verification |
+| Implement `NatsTestPublisher` (NATS.Net, real `sensor.snapshots` / `test.results.*`) | ✅ Code complete — needs live NATS verification |
+| NATS `anomaly.events` subscriber → `ReceiveAnomalyEvent` (real PyOD → banner path) | ✅ Code complete — needs live NATS verification |
+| `--hardware` launch mode wiring real implementations in DI | ✅ Code complete |
+| Minimal pass/fail evaluation (`ScenarioEvaluator`) in the executive against captured data | ✅ Complete (unit-tested) |
+| EFM32 firmware emits all four scenario profiles + 6-sensor suite (`downhole_sim`, replaces deprecated `radar_sim`) | ✅ Code complete — needs flash + `/dev/ttyACM0` verification |
+| `TelemetryHil.Hardware` shared adapter library (serial/TCP/NATS, non-WPF) | ✅ Complete |
+| `TcpSerialDevice` — serial-over-TCP so the Windows WPF executive reaches the P52s-attached EFM32 via ser2net | ✅ Code complete — verified against a local fake bridge |
+| `TelemetryHil.Runner` — headless CLI executive (runs on Linux; WPF cannot) | ✅ Complete — full scenario PASS verified against fake device+Saleae; linux-x64 publish verified |
+| ser2net + firewall (5000/8000) additions to P52s NixOS config | ✅ Proposed in `config/nixos/agent_P52s-configuration.nix` — review + `nixos-rebuild switch` |
+| Run `test_nats_pyod.py` end-to-end against live PyOD pod | ⬜ Physical/P52s step |
+
+> **Platform note:** the WPF executive is Windows-only (WPF does not run on
+> Linux — the old `dotnet publish -r linux-x64` deployment note was never
+> viable for it). The two supported hardware topologies are:
+> 1. **WPF on the Windows desktop** → `tcp://k3s-agent-01:5000` (ser2net UART
+>    bridge) + `SALEAE_URL=http://k3s-agent-01:8000` + live NATS
+> 2. **`telemetryhil-runner` on the P52s** — headless, local `/dev/ttyACM0`,
+>    published via `dotnet publish -r linux-x64 --self-contained`
+
+**Remaining physical steps (require P52s and/or devices):**
+- Flash `downhole_sim` firmware to the EFM32, confirm DET + 6 sensor lines on real UART
+- Apply the ser2net/firewall NixOS diff on the P52s (`nixos-rebuild switch`)
+- Topology 1: WPF `--hardware` from Windows with `tcp://k3s-agent-01:5000`
+- Topology 2: scp `telemetryhil-runner` to the P52s, `--scenario normal_operation --nats-url nats://192.168.8.240:4222`
+- Run `test_nats_pyod.py` from the P52s against the live PyOD pod
 
 **Exit demo:** `run scenario=fault` → real hardware → real capture → verdict → log output.
 Capture a ~60s GIF for the README.
+
+---
+
+### Putt sensor track (parallel — lives in the `putt-imu` repo)
+
+The putt stroke sensor (XIAO nRF52840 Sense, BLE) is developed in the
+sibling `putt-imu` repo; its CLAUDE.md is authoritative. The C# executive
+stays BLE-ignorant — BLE is a Python `bleak` adapter run bare in a venv
+(no container), mirroring the saleae-service "Python owns hardware I/O"
+pattern.
+
+- [x] Python `core/` pipeline (fusion, segmentation, metrics) + golden vectors (putt-imu)
+- [x] Replay adapter + synthetic stroke generator (SIL, no hardware needed)
+- [ ] `firmware/xiao-putter/` — GATT layout + record-then-dump stroke buffer (blocked on hardware arrival)
+- [ ] `putter/adapters/ble_source.py` — fill in UUIDs + dump framing once firmware defines them
+- [ ] NATS: publish to `putter.stroke.raw` / `putter.stroke.metrics` (subjects already defined in `nats_sink.py`)
+- [ ] InfluxDB: new `putter-telemetry` bucket + Grafana dashboard (existing data plane untouched)
+- [ ] Optional, later: read-only "Putt Sensor" card in the executive subscribing to `putter.stroke.metrics`
 
 ---
 

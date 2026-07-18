@@ -160,11 +160,36 @@ SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTR{idVendor}=="21a9", ATTR{idPro
 
   # List services that you want to enable:
 
+  # ── ser2net: expose the EFM32 UART (/dev/ttyACM0) on TCP 5000 ──────────────
+  # Lets the Windows-hosted TelemetryHil.Executive (WPF cannot run on Linux)
+  # reach the device over the LAN via TcpSerialDevice ("tcp://k3s-agent-01:5000"
+  # in the port box). Baud is fixed here; the client-side baud setting is
+  # ignored for tcp:// targets. kickolduser lets a reconnect steal the port
+  # instead of getting refused. LAN-only trust — no auth on this port.
+  systemd.services.ser2net = {
+    description = "ser2net serial-over-TCP bridge for EFM32 on /dev/ttyACM0";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "network.target" ];
+    serviceConfig = {
+      ExecStart = "${pkgs.ser2net}/bin/ser2net -n -c ${pkgs.writeText "ser2net.yaml" ''
+        connection: &efm32
+          accepter: tcp,5000
+          connector: serialdev,/dev/ttyACM0,115200n81,local
+          options:
+            kickolduser: true
+      ''}";
+      Restart = "on-failure";
+      RestartSec = 5;
+    };
+  };
+
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
 
   # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [ 10250 ];
+  # 5000 = ser2net UART bridge, 8000 = Saleae FastAPI (both needed when the
+  # executive runs on the Windows desktop instead of locally on the P52s)
+  networking.firewall.allowedTCPPorts = [ 10250 5000 8000 ];
   networking.firewall.allowedUDPPorts = [ 8472 ];  # flannel VXLAN
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
