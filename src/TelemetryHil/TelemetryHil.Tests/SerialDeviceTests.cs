@@ -38,7 +38,7 @@ public class SerialDeviceTests
 
         mock.Object.FrameReceived += (_, f) => received = f;
         mock.Raise(d => d.FrameReceived += null,
-            new DetectionFrame(622000, 10, 200, 95, 1));
+            mock.Object, new DetectionFrame(622000, 10, 200, 95, 1));
 
         received.Should().NotBeNull();
         received!.TimestampMs.Should().Be(622000);

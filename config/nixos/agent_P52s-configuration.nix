@@ -98,13 +98,16 @@ SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTR{idVendor}=="21a9", ATTR{idPro
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-     vim
-     wget
-     tcpdump
-     python3
-     python3Packages.pip
-     dotnet-runtime_8
+    vim
+    wget
+    tcpdump
+    dotnet-runtime_8
+    (python3.withPackages (ps: with ps; [
+      uvicorn
+      fastapi
+    ]))
   ];
+  
 
   environment.sessionVariables = {
     LD_LIBRARY_PATH = "${pkgs.stdenv.cc.cc.lib}/lib";
@@ -146,6 +149,12 @@ SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTR{idVendor}=="21a9", ATTR{idPro
       expat
       libxkbcommon
       alsa-lib
+      # Avalonia executive (telemetryhil-executive, self-contained linux-x64)
+      fontconfig
+      freetype
+      xorg.libICE
+      xorg.libSM
+      xorg.libXrender
       xorg.libXcomposite
       xorg.libXdamage
       xorg.libXext
@@ -159,29 +168,6 @@ SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTR{idVendor}=="21a9", ATTR{idPro
   };
 
   # List services that you want to enable:
-
-  # ── ser2net: expose the EFM32 UART (/dev/ttyACM0) on TCP 5000 ──────────────
-  # Lets the Windows-hosted TelemetryHil.Executive (WPF cannot run on Linux)
-  # reach the device over the LAN via TcpSerialDevice ("tcp://k3s-agent-01:5000"
-  # in the port box). Baud is fixed here; the client-side baud setting is
-  # ignored for tcp:// targets. kickolduser lets a reconnect steal the port
-  # instead of getting refused. LAN-only trust — no auth on this port.
-  systemd.services.ser2net = {
-    description = "ser2net serial-over-TCP bridge for EFM32 on /dev/ttyACM0";
-    wantedBy = [ "multi-user.target" ];
-    after = [ "network.target" ];
-    serviceConfig = {
-      ExecStart = "${pkgs.ser2net}/bin/ser2net -n -c ${pkgs.writeText "ser2net.yaml" ''
-        connection: &efm32
-          accepter: tcp,5000
-          connector: serialdev,/dev/ttyACM0,115200n81,local
-          options:
-            kickolduser: true
-      ''}";
-      Restart = "on-failure";
-      RestartSec = 5;
-    };
-  };
 
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;

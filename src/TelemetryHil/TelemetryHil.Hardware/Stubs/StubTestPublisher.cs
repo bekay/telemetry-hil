@@ -1,7 +1,7 @@
 ﻿using TelemetryHil.Core.Interfaces;
 using TelemetryHil.Core.Models;
 
-namespace TelemetryHil.Executive.Services
+namespace TelemetryHil.Hardware.Stubs
 {
     /// <summary>
     /// Stub NATS publisher — logs to console.
@@ -28,7 +28,7 @@ namespace TelemetryHil.Executive.Services
         public Task PublishFrameAsync(DetectionFrame frame, string subject, CancellationToken ct = default)
             => Task.CompletedTask;
 
-        public Task PublishSnapshotAsync(DownholeSensorSnapshot snapshot, CancellationToken ct = default)
+        public Task PublishSnapshotAsync(DownholeSensorSnapshot snapshot, string? scenarioName = null, CancellationToken ct = default)
         {
             Console.WriteLine(
                 $"[stub-nats] snapshot: " +

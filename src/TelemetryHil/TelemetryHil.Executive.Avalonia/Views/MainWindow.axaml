@@ -1,0 +1,317 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="using:TelemetryHil.Executive.Avalonia"
+        x:Class="TelemetryHil.Executive.Avalonia.Views.MainWindow"
+        Title="TelemetryHIL — Hardware Validation Executive"
+        Width="1280" Height="960"
+        MinWidth="1000" MinHeight="720"
+        Background="{StaticResource BackgroundBrush}"
+        Foreground="{StaticResource TextPrimaryBrush}">
+
+    <Grid Margin="12" RowDefinitions="Auto,Auto,Auto,Auto,*,180">
+
+        <!-- ── Title bar ──────────────────────────────────────────────────── -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
+            <TextBlock Text="TELEMETRY" Foreground="{StaticResource AccentBrush}"
+                       FontSize="18" FontWeight="Bold"/>
+            <TextBlock Text="HIL" Foreground="{StaticResource TextPrimaryBrush}"
+                       FontSize="18" FontWeight="Light" Margin="6,0,0,0"/>
+            <TextBlock Text="Hardware Validation Executive"
+                       Foreground="{StaticResource TextSecondaryBrush}"
+                       FontSize="11" VerticalAlignment="Bottom" Margin="14,0,0,2"/>
+        </StackPanel>
+
+        <!-- ── Status strip ───────────────────────────────────────────────── -->
+        <Border Grid.Row="1" Classes="card" Margin="0,0,0,6">
+            <StackPanel Orientation="Horizontal" Spacing="16">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <Ellipse Width="8" Height="8" VerticalAlignment="Center"
+                             Fill="{Binding DeviceState, Converter={x:Static local:Converters.DeviceStateToBrush}}"/>
+                    <TextBlock Classes="label" Text="DEVICE"/>
+                    <TextBlock Classes="value" Text="{Binding DeviceStateLabel}"/>
+                </StackPanel>
+                <Rectangle Width="1" Fill="{StaticResource PanelBorderBrush}"/>
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <Ellipse Width="8" Height="8" VerticalAlignment="Center"
+                             Fill="{Binding SaleaeConnected, Converter={x:Static local:Converters.BoolToStatusBrush}}"/>
+                    <TextBlock Classes="label" Text="SALEAE"/>
+                    <TextBlock Classes="value" Text="{Binding SaleaeStateLabel}"/>
+                </StackPanel>
+                <Rectangle Width="1" Fill="{StaticResource PanelBorderBrush}"/>
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <Ellipse Width="8" Height="8" VerticalAlignment="Center"
+                             Fill="{Binding NatsState, Converter={x:Static local:Converters.NatsStateToBrush}}"/>
+                    <TextBlock Classes="label" Text="NATS"/>
+                    <TextBlock Classes="value" Text="{Binding NatsStateLabel}"/>
+                </StackPanel>
+                <Rectangle Width="1" Fill="{StaticResource PanelBorderBrush}"/>
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <TextBlock Classes="label" Text="FIRMWARE"/>
+                    <TextBlock Classes="value" Text="{Binding FirmwareId}"
+                               Foreground="{StaticResource AccentBrush}"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- ── Sensor strip ───────────────────────────────────────────────── -->
+        <Border Grid.Row="2" Classes="card" Margin="0,0,0,6">
+            <Grid ColumnDefinitions="*,1,*,1,*,1,*,1,*,1,*">
+                <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+                    <TextBlock Classes="label" Text="PRESSURE" HorizontalAlignment="Center" Margin="0,0,0,3"/>
+                    <TextBlock Classes="value mono" Text="{Binding PressureDisplay}"
+                               HorizontalAlignment="Center" FontSize="13"/>
+                </StackPanel>
+                <Rectangle Grid.Column="1" Fill="{StaticResource PanelBorderBrush}"/>
+                <StackPanel Grid.Column="2" HorizontalAlignment="Center">
+                    <TextBlock Classes="label" Text="TEMPERATURE" HorizontalAlignment="Center" Margin="0,0,0,3"/>
+                    <TextBlock Classes="value mono" Text="{Binding TemperatureDisplay}"
+                               HorizontalAlignment="Center" FontSize="13"/>
+                </StackPanel>
+                <Rectangle Grid.Column="3" Fill="{StaticResource PanelBorderBrush}"/>
+                <StackPanel Grid.Column="4" HorizontalAlignment="Center">
+                    <TextBlock Classes="label" Text="ROTATION" HorizontalAlignment="Center" Margin="0,0,0,3"/>
+                    <TextBlock Classes="value mono" Text="{Binding RotationDisplay}"
+                               HorizontalAlignment="Center" FontSize="13"/>
+                </StackPanel>
+                <Rectangle Grid.Column="5" Fill="{StaticResource PanelBorderBrush}"/>
+                <StackPanel Grid.Column="6" HorizontalAlignment="Center">
+                    <TextBlock Classes="label" Text="DEPTH" HorizontalAlignment="Center" Margin="0,0,0,3"/>
+                    <TextBlock Classes="value mono" Text="{Binding DepthDisplay}"
+                               HorizontalAlignment="Center" FontSize="13"/>
+                </StackPanel>
+                <Rectangle Grid.Column="7" Fill="{StaticResource PanelBorderBrush}"/>
+                <StackPanel Grid.Column="8" HorizontalAlignment="Center">
+                    <TextBlock Classes="label" Text="TENSION" HorizontalAlignment="Center" Margin="0,0,0,3"/>
+                    <TextBlock Classes="value mono" Text="{Binding TensionDisplay}"
+                               HorizontalAlignment="Center" FontSize="13"/>
+                </StackPanel>
+                <Rectangle Grid.Column="9" Fill="{StaticResource PanelBorderBrush}"/>
+                <StackPanel Grid.Column="10" HorizontalAlignment="Center">
+                    <TextBlock Classes="label" Text="LINE SPEED" HorizontalAlignment="Center" Margin="0,0,0,3"/>
+                    <TextBlock Classes="value mono" Text="{Binding LineSpeedDisplay}"
+                               HorizontalAlignment="Center" FontSize="13"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ── Anomaly banner ─────────────────────────────────────────────── -->
+        <Border Grid.Row="3" Margin="0,0,0,6" CornerRadius="6" BorderThickness="1"
+                Padding="12,10"
+                IsVisible="{Binding AnomalyBannerVisible}"
+                Background="{Binding IsBannerCritical, Converter={x:Static local:Converters.BannerBackground}}"
+                BorderBrush="{Binding IsBannerCritical, Converter={x:Static local:Converters.BannerBorder}}">
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding AnomalyBannerTitle}"
+                               Foreground="{Binding IsBannerCritical, Converter={x:Static local:Converters.BannerForeground}}"
+                               FontWeight="SemiBold" FontSize="12" Margin="0,0,0,3"/>
+                    <TextBlock Text="{Binding AnomalyBannerDetail}" Classes="label mono"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Spacing="6">
+                    <Button Classes="danger" Content="✕  Fail" Command="{Binding AnomalyFailCommand}"/>
+                    <Button Classes="warn" Content="⚠  Warn + Continue" Command="{Binding AnomalyWarnContinueCommand}"/>
+                    <Button Classes="warn" Content="↺  Warn + Retest" Command="{Binding AnomalyWarnRetestCommand}"/>
+                    <Button Classes="primary" Content="—  Dismiss" Command="{Binding AnomalyDismissCommand}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ── Main panels ─────────────────────────────────────────────────── -->
+        <Grid Grid.Row="4" ColumnDefinitions="220,8,260,8,*" Margin="0,0,0,6">
+
+            <!-- Left: device / saleae / nats -->
+            <StackPanel Grid.Column="0" Spacing="6">
+                <Border Classes="card">
+                    <StackPanel>
+                        <TextBlock Classes="section" Text="DEVICE"/>
+                        <Grid ColumnDefinitions="70,*" RowDefinitions="24,24,24" Margin="0,0,0,8">
+                            <TextBlock Grid.Row="0" Grid.Column="0" Classes="label" Text="Port"/>
+                            <TextBox   Grid.Row="0" Grid.Column="1" Classes="field"
+                                       Text="{Binding PortName}"/>
+                            <TextBlock Grid.Row="1" Grid.Column="0" Classes="label" Text="Status"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Classes="value"
+                                       Text="{Binding DeviceStateLabel}"/>
+                            <TextBlock Grid.Row="2" Grid.Column="0" Classes="label" Text="Last seen"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" Classes="value mono"
+                                       Text="{Binding LastSeen}"/>
+                        </Grid>
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <Button Classes="primary" Content="Connect" Command="{Binding ConnectDeviceCommand}"/>
+                            <Button Classes="danger" Content="Disconnect" Command="{Binding DisconnectDeviceCommand}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <Border Classes="card">
+                    <StackPanel>
+                        <TextBlock Classes="section" Text="SIGNAL CAPTURE"/>
+                        <Grid ColumnDefinitions="80,*" RowDefinitions="24,24" Margin="0,0,0,8">
+                            <TextBlock Grid.Row="0" Grid.Column="0" Classes="label" Text="Status"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Classes="value"
+                                       Text="{Binding SaleaeStateLabel}"/>
+                            <TextBlock Grid.Row="1" Grid.Column="0" Classes="label" Text="Last capture"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Classes="value"
+                                       Text="{Binding LastCaptureInfo}" FontSize="11"/>
+                        </Grid>
+                        <Button Classes="primary" Content="Check Health"
+                                Command="{Binding CheckSaleaeCommand}" HorizontalAlignment="Left"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Classes="card">
+                    <StackPanel>
+                        <TextBlock Classes="section" Text="NATS"/>
+                        <Grid ColumnDefinitions="50,*" RowDefinitions="24,24" Margin="0,0,0,8">
+                            <TextBlock Grid.Row="0" Grid.Column="0" Classes="label" Text="URL"/>
+                            <TextBox   Grid.Row="0" Grid.Column="1" Classes="field"
+                                       Text="{Binding NatsUrl}" FontSize="10"/>
+                            <TextBlock Grid.Row="1" Grid.Column="0" Classes="label" Text="Status"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Classes="value"
+                                       Text="{Binding NatsStateLabel}"/>
+                        </Grid>
+                        <Button Classes="primary" Content="Connect"
+                                Command="{Binding ConnectNatsCommand}" HorizontalAlignment="Left"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <!-- Scenario panel -->
+            <Border Grid.Column="2" Classes="card">
+                <StackPanel Spacing="8">
+                    <TextBlock Classes="section" Text="SCENARIO" Margin="0"/>
+
+                    <StackPanel>
+                        <TextBlock Classes="label" Text="Scenario" Margin="0,0,0,4"/>
+                        <ComboBox ItemsSource="{Binding Scenarios}"
+                                  SelectedItem="{Binding SelectedScenario}"
+                                  HorizontalAlignment="Stretch">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <!-- Scenario details -->
+                    <Border Background="{StaticResource InputBrush}" CornerRadius="4" Padding="8"
+                            IsVisible="{Binding SelectedScenario, Converter={x:Static ObjectConverters.IsNotNull}}">
+                        <Grid ColumnDefinitions="90,*"
+                              RowDefinitions="20,20,20,20,20,20,20,20,20">
+                            <TextBlock Grid.Row="0" Grid.Column="0" Classes="label" Text="Mode"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Classes="value mono"
+                                       Text="{Binding SelectedScenario.SensorMode}"/>
+                            <TextBlock Grid.Row="1" Grid.Column="0" Classes="label" Text="Fault"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Classes="value mono"
+                                       Text="{Binding SelectedScenario.FaultInjection}"/>
+                            <TextBlock Grid.Row="2" Grid.Column="0" Classes="label" Text="Duration"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" Classes="value mono"
+                                       Text="{Binding SelectedScenario.DurationSeconds, StringFormat='{}{0}s'}"/>
+                            <TextBlock Grid.Row="3" Grid.Column="0" Classes="label" Text="Pressure"/>
+                            <TextBlock Grid.Row="3" Grid.Column="1" Classes="value mono"
+                                       Text="{Binding SelectedScenario.SimPressurePsi, StringFormat='{}{0:F0} PSI'}"/>
+                            <TextBlock Grid.Row="4" Grid.Column="0" Classes="label" Text="Temp"/>
+                            <TextBlock Grid.Row="4" Grid.Column="1" Classes="value mono"
+                                       Text="{Binding SelectedScenario.SimTemperatureC, StringFormat='{}{0:F1} °C'}"/>
+                            <TextBlock Grid.Row="5" Grid.Column="0" Classes="label" Text="Rotation"/>
+                            <TextBlock Grid.Row="5" Grid.Column="1" Classes="value mono"
+                                       Text="{Binding SelectedScenario.SimRotationRpm, StringFormat='{}{0:F0} RPM'}"/>
+                            <TextBlock Grid.Row="6" Grid.Column="0" Classes="label" Text="Depth"/>
+                            <TextBlock Grid.Row="6" Grid.Column="1" Classes="value mono"
+                                       Text="{Binding SelectedScenario.SimDepthM, StringFormat='{}{0:F0} m'}"/>
+                            <TextBlock Grid.Row="7" Grid.Column="0" Classes="label" Text="Tension"/>
+                            <TextBlock Grid.Row="7" Grid.Column="1" Classes="value mono"
+                                       Text="{Binding SelectedScenario.SimTensionKn, StringFormat='{}{0:F1} kN'}"/>
+                            <TextBlock Grid.Row="8" Grid.Column="0" Classes="label" Text="Line speed"/>
+                            <TextBlock Grid.Row="8" Grid.Column="1" Classes="value mono"
+                                       Text="{Binding SelectedScenario.SimLineSpeedMs, StringFormat='{}{0:F2} m/s'}"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Running indicator -->
+                    <Border Background="#1A00D4FF" CornerRadius="4" Padding="8"
+                            IsVisible="{Binding IsRunning}">
+                        <TextBlock Text="● RUNNING" Foreground="{StaticResource AccentBrush}"
+                                   Classes="mono" FontWeight="SemiBold"/>
+                    </Border>
+
+                    <Button Classes="primary" Content="▶  Run Scenario"
+                            Command="{Binding RunScenarioCommand}"
+                            IsEnabled="{Binding CanRun}"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Center"/>
+                    <Button Classes="danger" Content="■  Cancel"
+                            Command="{Binding CancelRunCommand}"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Center"/>
+                    <Button Classes="warn" Content="⚡  Inject Anomaly"
+                            Command="{Binding InjectStubAnomalyCommand}"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Results panel -->
+            <Border Grid.Column="4" Classes="card">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Classes="section" Text="RESULTS"/>
+
+                    <!-- Header row -->
+                    <Grid DockPanel.Dock="Top" ColumnDefinitions="75,155,55,80,55,65,*" Margin="4,0,4,4">
+                        <TextBlock Grid.Column="0" Classes="label" Text="Time"/>
+                        <TextBlock Grid.Column="1" Classes="label" Text="Scenario"/>
+                        <TextBlock Grid.Column="2" Classes="label" Text="Result"/>
+                        <TextBlock Grid.Column="3" Classes="label" Text="Anomalies"/>
+                        <TextBlock Grid.Column="4" Classes="label" Text="Pulses"/>
+                        <TextBlock Grid.Column="5" Classes="label" Text="Avg µs"/>
+                        <TextBlock Grid.Column="6" Classes="label" Text="Failure"/>
+                    </Grid>
+
+                    <ListBox ItemsSource="{Binding Results}" Background="Transparent"
+                             BorderThickness="0">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnDefinitions="75,155,55,80,55,65,*">
+                                    <TextBlock Grid.Column="0" Classes="mono" FontSize="11"
+                                               Text="{Binding ExecutedAt, StringFormat=HH:mm:ss}"/>
+                                    <TextBlock Grid.Column="1" FontSize="11"
+                                               Text="{Binding ScenarioName}"/>
+                                    <TextBlock Grid.Column="2" FontSize="11" FontWeight="SemiBold"
+                                               Text="{Binding Passed, Converter={x:Static local:Converters.PassFail}}"
+                                               Foreground="{Binding Passed, Converter={x:Static local:Converters.PassFailBrush}}"/>
+                                    <TextBlock Grid.Column="3" FontSize="11"
+                                               Text="{Binding AnomalyCount, Converter={x:Static local:Converters.AnomalyCount}}"
+                                               Foreground="{Binding HasCritical, Converter={x:Static local:Converters.CriticalToBrush}}"/>
+                                    <TextBlock Grid.Column="4" Classes="mono" FontSize="11"
+                                               Text="{Binding SignalCapture.PulseCount}"/>
+                                    <TextBlock Grid.Column="5" Classes="mono" FontSize="11"
+                                               Text="{Binding SignalCapture.AvgPulseWidthUs, StringFormat=F1}"/>
+                                    <TextBlock Grid.Column="6" FontSize="11" TextWrapping="Wrap"
+                                               Foreground="{StaticResource TextSecondaryBrush}"
+                                               Text="{Binding FailureReason}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                        <ListBox.Styles>
+                            <Style Selector="ListBoxItem">
+                                <Setter Property="Padding" Value="4,3"/>
+                                <Setter Property="MinHeight" Value="0"/>
+                            </Style>
+                        </ListBox.Styles>
+                    </ListBox>
+                </DockPanel>
+            </Border>
+        </Grid>
+
+        <!-- ── UART feed ───────────────────────────────────────────────────── -->
+        <Border Grid.Row="5" Classes="card" Padding="0">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Classes="section" Text="UART FEED"
+                           Margin="12,8,12,4"/>
+                <TextBox Classes="log" x:Name="UartLogBox"
+                         Text="{Binding UartLog, Mode=OneWay}"/>
+            </DockPanel>
+        </Border>
+
+    </Grid>
+</Window>

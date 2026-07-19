@@ -12,6 +12,6 @@ namespace TelemetryHil.Core.Interfaces
         Task<bool> ConnectAsync(string natsUrl, CancellationToken ct = default);
         Task PublishScenarioResultAsync(ScenarioResult result, CancellationToken ct = default);
         Task PublishFrameAsync(DetectionFrame frame, string subject, CancellationToken ct = default);
-        Task PublishSnapshotAsync(DownholeSensorSnapshot snapshot, CancellationToken ct = default);
+        Task PublishSnapshotAsync(DownholeSensorSnapshot snapshot, string? scenarioName = null, CancellationToken ct = default);
     }
 }

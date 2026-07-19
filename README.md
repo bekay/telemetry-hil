@@ -11,20 +11,20 @@ Testing platform for geothermal logging devices and a DIY putting stats device v
 │                        ThinkPad P52s (NixOS)                    │
 │                                                                  │
 │  ┌──────────────────┐      ┌────────────────────────────────┐   │
-│  │  EFM32 Pearl     │      │   Python FastAPI               │   │
+│  │  - EFM32 Pearl   │      │   Python FastAPI               │   │
 │  │  Gecko           │      │   Saleae gRPC Wrapper          │   │
 │  │                  │      │   :8000                        │   │
-│  │  Radar Simulator │      │         │                      │   │
+│  │  Downhole Simulator │      │         │                      │   │
 │  │  bare metal C    │      │   Saleae Logic 16 (USB)        │   │
 │  │  ~1Hz UART out   │      │   Logic 2 (squashfs-root)      │   │
 │  └────────┬─────────┘      └───────────────┬────────────────┘   │
 │           │ /dev/ttyACM0         HTTP /capture                  │
 │           ▼                               ▲                     │
 │  ┌──────────────────────────────────────────────────────────┐   │
-│  │              C# WPF Executive (TelemetryHil.Executive)       │   │
+│  │              C# WPF Executive (TelemetryHil.Executive)   │   |
 │  │                                                          │   │
 │  │   ISerialDevice → ISignalCapture → ITestPublisher        │   │
-│  │   TelemetryHil.Core hardware abstraction interfaces          │   │
+│  │   TelemetryHil.Core hardware abstraction interfaces      │   |
 │  └─────────────────────────┬────────────────────────────────┘   │
 │                            │ NATS publish                       │
 └────────────────────────────┼────────────────────────────────────┘
@@ -36,7 +36,7 @@ Testing platform for geothermal logging devices and a DIY putting stats device v
 │   │  NATS    │   │ InfluxDB │   │   InfluxDB   │   │Grafana │  │
 │   │          │──▶│          │◀──│   Writer     │   │:30300  │  │
 │   └──────────┘   └──────────┘   └──────────────┘   └────────┘  │
-│                   radar-telemetry bucket                         │
+│                   putting/dh-telemetry bucket                   │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -160,19 +160,24 @@ Testing platform for geothermal logging devices and a DIY putting stats device v
 | ser2net + firewall (5000/8000) additions to P52s NixOS config | ✅ Proposed in `config/nixos/agent_P52s-configuration.nix` — review + `nixos-rebuild switch` |
 | Run `test_nats_pyod.py` end-to-end against live PyOD pod | ⬜ Physical/P52s step |
 
-> **Platform note:** the WPF executive is Windows-only (WPF does not run on
-> Linux — the old `dotnet publish -r linux-x64` deployment note was never
-> viable for it). The two supported hardware topologies are:
-> 1. **WPF on the Windows desktop** → `tcp://k3s-agent-01:5000` (ser2net UART
->    bridge) + `SALEAE_URL=http://k3s-agent-01:8000` + live NATS
-> 2. **`telemetryhil-runner` on the P52s** — headless, local `/dev/ttyACM0`,
->    published via `dotnet publish -r linux-x64 --self-contained`
+> **Platform note (updated):** the operator UI is now
+> **`TelemetryHil.Executive.Avalonia`** (cross-platform, same MVVM/view-model,
+> same C# stack) — it runs **natively on the P52s** with direct
+> `/dev/ttyACM0` + `http://localhost:8000` access, eliminating the TCP
+> bridge from the critical path. The WPF project is kept for reference but
+> is no longer the primary executive. Supported topologies:
+> 1. **Avalonia executive on the P52s** (primary) — local serial, local
+>    Saleae, live NATS. `dotnet publish -r linux-x64 --self-contained`, scp,
+>    run `telemetryhil-executive --hardware` from the GNOME session.
+> 2. **`telemetryhil-runner` on the P52s** — headless/CI runs.
+> 3. **Avalonia (or legacy WPF) on Windows** → optional ser2net
+>    `tcp://<p52s-ip>:5000` + `SALEAE_URL=http://<p52s-ip>:8000` for
+>    desk-side development without touching the lab.
 
 **Remaining physical steps (require P52s and/or devices):**
-- Flash `downhole_sim` firmware to the EFM32, confirm DET + 6 sensor lines on real UART
-- Apply the ser2net/firewall NixOS diff on the P52s (`nixos-rebuild switch`)
-- Topology 1: WPF `--hardware` from Windows with `tcp://k3s-agent-01:5000`
-- Topology 2: scp `telemetryhil-runner` to the P52s, `--scenario normal_operation --nats-url nats://192.168.8.240:4222`
+- Rebuild P52s NixOS (adds Avalonia runtime libs to nix-ld; ser2net stays as optional fallback)
+- scp the published `telemetryhil-executive` (Avalonia) to the P52s, run `--hardware` from the GNOME session against local `/dev/ttyACM0`
+- Or headless: scp `telemetryhil-runner`, `--scenario normal_operation --nats-url nats://192.168.8.240:4222`
 - Run `test_nats_pyod.py` from the P52s against the live PyOD pod
 
 **Exit demo:** `run scenario=fault` → real hardware → real capture → verdict → log output.

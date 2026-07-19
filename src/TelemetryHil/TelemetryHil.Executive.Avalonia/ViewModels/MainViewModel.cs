@@ -1,15 +1,18 @@
-﻿using System.Collections.ObjectModel;
-using System.Windows.Threading;
+using System.Collections.ObjectModel;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using TelemetryHil.Core.Interfaces;
 using TelemetryHil.Core.Models;
 using TelemetryHil.Core.Services;
-using TelemetryHil.Executive.Services;
 using TelemetryHil.Hardware.Stubs;
 
-namespace TelemetryHil.Executive.ViewModels;
+namespace TelemetryHil.Executive.Avalonia.ViewModels;
 
+/// <summary>
+/// Cross-platform port of the WPF MainViewModel — identical behavior, with
+/// Avalonia's Dispatcher.UIThread in place of the WPF Dispatcher.
+/// </summary>
 public partial class MainViewModel : ObservableObject
 {
     private readonly ISerialDevice _serial;
@@ -17,7 +20,6 @@ public partial class MainViewModel : ObservableObject
     private readonly ITestPublisher _publisher;
     private readonly IAnomalySubscriber? _anomalySubscriber;
     private readonly ISensorAggregator _aggregator;
-    private readonly Dispatcher _dispatcher;
     private CancellationTokenSource? _runCts;
 
     // Anomalies accumulated during the current run
@@ -130,7 +132,6 @@ public partial class MainViewModel : ObservableObject
         _anomalySubscriber = anomalySubscriber;
         if (_anomalySubscriber is not null)
             _anomalySubscriber.AnomalyReceived += (_, a) => ReceiveAnomalyEvent(a);
-        _dispatcher = Dispatcher.CurrentDispatcher;
         _aggregator = new SensorAggregator();
 
         _serial.RawLineReceived += OnRawLine;
@@ -262,7 +263,7 @@ public partial class MainViewModel : ObservableObject
                 SignalCapture: capture,
                 Anomalies: _runAnomalies.ToList().AsReadOnly());
 
-            _dispatcher.Invoke(() => Results.Insert(0, result));
+            Dispatcher.UIThread.Invoke(() => Results.Insert(0, result));
 
             if (IsNatsConnected)
                 await _publisher.PublishScenarioResultAsync(result, _runCts.Token);
@@ -356,12 +357,12 @@ public partial class MainViewModel : ObservableObject
     // ── Anomaly helpers ───────────────────────────────────────────────────────
 
     /// <summary>
-    /// Entry point for anomaly events — called from stub inject
-    /// and will be called from real NATS subscriber when PyOD pod is live.
+    /// Entry point for anomaly events — called from stub inject and from the
+    /// NATS anomaly.events subscriber in --hardware mode.
     /// </summary>
     public void ReceiveAnomalyEvent(AnomalyEvent anomaly)
     {
-        _dispatcher.BeginInvoke(() =>
+        Dispatcher.UIThread.Post(() =>
         {
             _runAnomalies.Add(anomaly);
             ActiveAnomaly = anomaly;
@@ -385,7 +386,7 @@ public partial class MainViewModel : ObservableObject
 
     private void DismissBanner()
     {
-        _dispatcher.BeginInvoke(() =>
+        Dispatcher.UIThread.Post(() =>
         {
             AnomalyBannerVisible = false;
             ActiveAnomaly = null;
@@ -395,17 +396,17 @@ public partial class MainViewModel : ObservableObject
     // ── Sensor update handlers ────────────────────────────────────────────────
 
     private void UpdatePressure(PressureFrame f)
-        => _dispatcher.BeginInvoke(() => PressureDisplay = $"{f.PressureRaw:F0} PSI");
+        => Dispatcher.UIThread.Post(() => PressureDisplay = $"{f.PressureRaw:F0} PSI");
     private void UpdateTemperature(TemperatureFrame f)
-        => _dispatcher.BeginInvoke(() => TemperatureDisplay = $"{f.TemperatureRaw:F1} °C");
+        => Dispatcher.UIThread.Post(() => TemperatureDisplay = $"{f.TemperatureRaw:F1} °C");
     private void UpdateRotation(RotationFrame f)
-        => _dispatcher.BeginInvoke(() => RotationDisplay = $"{f.RotationRaw:F0} RPM");
+        => Dispatcher.UIThread.Post(() => RotationDisplay = $"{f.RotationRaw:F0} RPM");
     private void UpdateDepth(DepthFrame f)
-        => _dispatcher.BeginInvoke(() => DepthDisplay = $"{f.DepthRaw:F1} m");
+        => Dispatcher.UIThread.Post(() => DepthDisplay = $"{f.DepthRaw:F1} m");
     private void UpdateTension(TensionFrame f)
-        => _dispatcher.BeginInvoke(() => TensionDisplay = $"{f.TensionRaw:F2} kN");
+        => Dispatcher.UIThread.Post(() => TensionDisplay = $"{f.TensionRaw:F2} kN");
     private void UpdateLineSpeed(LineSpeedFrame f)
-        => _dispatcher.BeginInvoke(() => LineSpeedDisplay = $"{f.SpeedRaw:F3} m/s");
+        => Dispatcher.UIThread.Post(() => LineSpeedDisplay = $"{f.SpeedRaw:F3} m/s");
 
     private void ClearSensorDisplays() =>
         PressureDisplay = TemperatureDisplay = RotationDisplay =
@@ -422,10 +423,10 @@ public partial class MainViewModel : ObservableObject
     // ── Serial event handlers ─────────────────────────────────────────────────
 
     private void OnRawLine(object? sender, string line)
-        => _dispatcher.BeginInvoke(() => AppendLog(line));
+        => Dispatcher.UIThread.Post(() => AppendLog(line));
 
     private void OnFrame(object? sender, DetectionFrame frame)
-        => _dispatcher.BeginInvoke(() =>
+        => Dispatcher.UIThread.Post(() =>
         {
             LastSeen = DateTimeOffset.Now.ToString("HH:mm:ss.fff");
             _aggregator.OnDetectionFrame(frame);

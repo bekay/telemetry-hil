@@ -1,5 +1,8 @@
 <Solution>
   <Project Path="TelemetryHil.Core/TelemetryHil.Core.csproj" />
+  <Project Path="TelemetryHil.Hardware/TelemetryHil.Hardware.csproj" />
+  <Project Path="TelemetryHil.Runner/TelemetryHil.Runner.csproj" />
   <Project Path="TelemetryHil.Executive/TelemetryHil.Executive.csproj" />
+  <Project Path="TelemetryHil.Executive.Avalonia/TelemetryHil.Executive.Avalonia.csproj" />
   <Project Path="TelemetryHil.Tests/TelemetryHil.Tests.csproj" Id="d17540a1-f0bb-4bc1-904f-36d9e087dd88" />
 </Solution>

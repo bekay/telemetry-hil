@@ -1,0 +1,123 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="TelemetryHil.Executive.Avalonia.App"
+             RequestedThemeVariant="Dark">
+
+    <Application.Resources>
+        <!-- ── Palette (matches the WPF executive) ── -->
+        <SolidColorBrush x:Key="BackgroundBrush"    Color="#FF0F1117"/>
+        <SolidColorBrush x:Key="SurfaceBrush"       Color="#FF1A1D27"/>
+        <SolidColorBrush x:Key="PanelBorderBrush"   Color="#FF2A2D3A"/>
+        <SolidColorBrush x:Key="AccentBrush"        Color="#FF00D4FF"/>
+        <SolidColorBrush x:Key="AccentDimBrush"     Color="#FF007A99"/>
+        <SolidColorBrush x:Key="TextPrimaryBrush"   Color="#FFE8EAF0"/>
+        <SolidColorBrush x:Key="TextSecondaryBrush" Color="#FF8890A8"/>
+        <SolidColorBrush x:Key="SuccessBrush"       Color="#FF00C896"/>
+        <SolidColorBrush x:Key="WarningBrush"       Color="#FFFFC107"/>
+        <SolidColorBrush x:Key="ErrorBrush"         Color="#FFFF4B5C"/>
+        <SolidColorBrush x:Key="InputBrush"         Color="#FF0A0C12"/>
+        <SolidColorBrush x:Key="WarnDimBrush"       Color="#FF6B4E00"/>
+        <SolidColorBrush x:Key="DangerDimBrush"     Color="#FF8B1A1A"/>
+
+        <FontFamily x:Key="MonoFont">Cascadia Code, Consolas, DejaVu Sans Mono, monospace</FontFamily>
+    </Application.Resources>
+
+    <Application.Styles>
+        <FluentTheme />
+
+        <!-- ── Panel card ── -->
+        <Style Selector="Border.card">
+            <Setter Property="Background"      Value="{StaticResource SurfaceBrush}"/>
+            <Setter Property="BorderBrush"     Value="{StaticResource PanelBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius"    Value="6"/>
+            <Setter Property="Padding"         Value="12"/>
+        </Style>
+
+        <!-- ── Text roles ── -->
+        <Style Selector="TextBlock.section">
+            <Setter Property="Foreground" Value="{StaticResource AccentBrush}"/>
+            <Setter Property="FontSize"   Value="11"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin"     Value="0,0,0,8"/>
+        </Style>
+        <Style Selector="TextBlock.label">
+            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+            <Setter Property="FontSize"   Value="11"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="TextBlock.value">
+            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+            <Setter Property="FontSize"   Value="12"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="TextBlock.mono">
+            <Setter Property="FontFamily" Value="{StaticResource MonoFont}"/>
+            <Setter Property="FontSize"   Value="11"/>
+        </Style>
+
+        <!-- ── Buttons ── -->
+        <Style Selector="Button.primary">
+            <Setter Property="Background"      Value="{StaticResource AccentDimBrush}"/>
+            <Setter Property="Foreground"      Value="{StaticResource TextPrimaryBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="CornerRadius"    Value="4"/>
+            <Setter Property="Padding"         Value="12,6"/>
+            <Setter Property="FontSize"        Value="12"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+        </Style>
+        <Style Selector="Button.primary:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
+        </Style>
+        <Style Selector="Button.danger">
+            <Setter Property="Background"      Value="{StaticResource DangerDimBrush}"/>
+            <Setter Property="Foreground"      Value="{StaticResource TextPrimaryBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="CornerRadius"    Value="4"/>
+            <Setter Property="Padding"         Value="12,6"/>
+            <Setter Property="FontSize"        Value="12"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+        </Style>
+        <Style Selector="Button.danger:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{StaticResource ErrorBrush}"/>
+        </Style>
+        <Style Selector="Button.warn">
+            <Setter Property="Background"      Value="{StaticResource WarnDimBrush}"/>
+            <Setter Property="Foreground"      Value="{StaticResource TextPrimaryBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="CornerRadius"    Value="4"/>
+            <Setter Property="Padding"         Value="12,6"/>
+            <Setter Property="FontSize"        Value="12"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+        </Style>
+        <Style Selector="Button.warn:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{StaticResource WarningBrush}"/>
+        </Style>
+
+        <!-- ── Inputs ── -->
+        <Style Selector="TextBox.field">
+            <Setter Property="Background"      Value="{StaticResource InputBrush}"/>
+            <Setter Property="Foreground"      Value="{StaticResource TextPrimaryBrush}"/>
+            <Setter Property="BorderBrush"     Value="{StaticResource PanelBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding"         Value="4,2"/>
+            <Setter Property="MinHeight"       Value="22"/>
+            <Setter Property="FontFamily"      Value="{StaticResource MonoFont}"/>
+            <Setter Property="FontSize"        Value="11"/>
+        </Style>
+        <Style Selector="TextBox.log">
+            <Setter Property="Background"      Value="{StaticResource InputBrush}"/>
+            <Setter Property="Foreground"      Value="{StaticResource TextPrimaryBrush}"/>
+            <Setter Property="FontFamily"      Value="{StaticResource MonoFont}"/>
+            <Setter Property="FontSize"        Value="11"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="IsReadOnly"      Value="True"/>
+            <Setter Property="AcceptsReturn"   Value="True"/>
+            <Setter Property="Padding"         Value="8"/>
+        </Style>
+    </Application.Styles>
+</Application>

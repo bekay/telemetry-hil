@@ -1,7 +1,7 @@
 ﻿using TelemetryHil.Core.Interfaces;
 using TelemetryHil.Core.Models;
 
-namespace TelemetryHil.Executive.Services
+namespace TelemetryHil.Core.Services
 {
 
     /// <summary>

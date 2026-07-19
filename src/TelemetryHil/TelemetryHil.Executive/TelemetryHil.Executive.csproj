@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TelemetryHil.Core\TelemetryHil.Core.csproj" />
+    <ProjectReference Include="..\TelemetryHil.Hardware\TelemetryHil.Hardware.csproj" />
   </ItemGroup>
 
 </Project>
