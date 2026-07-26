@@ -101,9 +101,9 @@ RST    → reset to defaults
 
 ## Why NixOS
 
-The hard problem in hardware test infrastructure isn't the test logic, but maintaining the vendor drivers, package versions, udev rules, upgrades you didn't even know existed. and you're faced with the "works on my machine" defense. Any test infrastructure that becomes a pain to maintain eventually gets delayed until later stages of development, delaying the inevitable. Using NixOS and declarative builds and deployments
+The difficult part of hardware test infrastructure isn't the test logic, but maintaining the vendor drivers, package versions, udev rules, upgrades you didn't even know existed. and you're faced with the "works on my machine" defense. During hardware development, any friction within the test infrastructure actually hurts development because the developer either needs to context switch back to the test environment or delay testing,
 
-NixOS makes the agent node's entire configuration, including: kernel modules, udev rules, `nix-ld` shims for the vendor binaries, serial permissions, firewall, service definitions — a declarative file in this repository which can be further modified to inject configuration per agent. Once a testing rig is confirmed to be working, rebuilding a rig is `nixos-rebuild switch` against a committed config. When a run report says a verdict was produced on a given date, the exact state of the machine that produced it is recoverable from git.
+Using NixOS with declarative builds and deployments, makes the agent node's entire configuration, including: kernel modules, udev rules, `nix-ld` shims for the vendor binaries, serial permissions, firewall, service definitions — a declarative file in this repository which can be further modified to inject configuration per agent. Once a testing rig is confirmed to be working, rebuilding a rig is `nixos-rebuild switch` against a committed config. When a run report says a verdict was produced on a given date, the exact state of the machine that produced it is recoverable from git.
 
 ---
 
